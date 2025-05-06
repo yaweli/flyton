@@ -4,9 +4,7 @@ Python on the Fly - a non framework web development platform
 
 
 
-## Flyton 
-
-Non framework development environment
+## Non framework development environment
 
 Based on python3
 
