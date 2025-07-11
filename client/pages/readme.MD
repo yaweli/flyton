@@ -1,4 +1,4 @@
-# Static files
+# PAGES - Static files
 
 
 Will contain all the html static files that are not changed
@@ -16,3 +16,8 @@ many of the html pages are not changed
 
 #recomended files
 index.html - Project landing page
+err.html - error 404 page
+style.css - main style css
+
+
+im/logo1.png - main company logo1

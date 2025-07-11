@@ -1,0 +1,16 @@
+#!/usr/bin/python3 
+
+
+print("content-type: application/json")
+print("")
+
+myproj = "Myproj"
+
+from runpy import run_path
+try:
+    settings = run_path(f"/data/{myproj}/server/apis/cgi.py")
+except Exception as e:
+    print(f"internal API kicdev : An error occurred: {e}")
+
+
+# called from cgi-bin/api 
