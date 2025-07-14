@@ -1,7 +1,7 @@
 
 # Flyton
 
-**Flyton** is a non-framework, Python3-based web development environment that generates HTML pages on the fly — just like old-school PHP.
+**Flyton** is a non-framework, Python based web development environment that generates HTML pages on the fly
 
 ## ✨ Key Features
 
@@ -10,11 +10,15 @@
 - **Zero Package Dependencies**: Native Python — no external libraries required.
 - **Terminal + Browser Demo Ready**: See code come to life.
 - **Component-Like Programming**: Code is modular and self-explanatory.
-- **CGI Based**: Uses CGI scripts to connect browser ↔ Linux server.
+- **CGI Based**: Uses CGI scripts to connect browser ↔ apache ↔ Linux server.
 - **Apache2 + Ubuntu**: Reliable, well-supported stack.
-- **HTTPS Ready**: Deploy via AWS with CloudFront or Load Balancer.
+- **HTTPS**: Deploy via AWS with CloudFront or Load Balancer.
 - **MySQL Recommended**: One unified access point with SQL best practices.
 - **Managed Sessions**: Browser & server session support included.
+- **UI tools**: Buttons and form parameters passing utility
+- **Api**: Ready api mechanism for a dynamic web pages - with full support
+- **base tables**: sql best practice records structure with ready made tables: users / sessions / logs 
+- **database**: one point of tools to read and write to the database , secure and comfortable
 - **Directory Structure**:
   - `server/`
   - `client/`
@@ -35,6 +39,7 @@ Flyton prioritizes:
 - Clean, reusable code.
 - Developer-friendly standards.
 - Future-proof stability — 100% backward compatibility.
+- fast learning of the tools
 
 ## 🚀 Code Example
 
@@ -53,12 +58,44 @@ print(f"""
 """)
 ```
 
-## 🎬 Animation Suggestion
 
-A split-screen showing:
-1. Terminal running the Python CGI script.
-2. Browser displaying the resulting HTML.
 
----
+## Example 2:
+
+
+```python
+
+
+def page_top(search,meta,data):
+    return f"""
+        <div class="categoryPage_top">
+            <div class="categoryPage_topTitle">display {meta["total"]} products</div>
+            
+            {page_tags(search,meta) if not data.get("page_type") else ''}
+            
+            <div class="categoryPage_topLeft">
+                <div class="categoryPage_topSort">
+                    <label for="categorySort">sort by</label>
+                    <div class="comboHolder">
+                    <select id="categorySort" onchange=cat_resort(this.value)>
+                        <option value=pop>Rating</option>
+                        <option value=sortl>Price low</option>
+                        <option value=sorth>Price high</option>
+                    </select></div>
+                </div>
+                <div class="categoryPage_mobileToggleFilter"><a style="cursor: pointer;" class="hasFilters" aria-controls="categoryPage_filterPanel" role="button">filters</a></div>
+            </div>
+        </div>           
+    """
+
+
+
+
+
+
+
+
+```
+
 
 > Flyton: Write in Python. Fly on the web.
