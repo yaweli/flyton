@@ -69,6 +69,7 @@ print(f"""
 def page_top(data):
     ses = data["ses"]
     search = data["search"]
+    meta   = data["meta"]
     return f"""
         <div class="categoryPage_top">
             <div class="categoryPage_topTitle">display {meta["total"]} products</div>
