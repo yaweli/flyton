@@ -66,12 +66,14 @@ print(f"""
 ```python
 
 
-def page_top(search,meta,data):
+def page_top(data):
+    ses = data["ses"]
+    search = data["search"]
     return f"""
         <div class="categoryPage_top">
             <div class="categoryPage_topTitle">display {meta["total"]} products</div>
             
-            {page_tags(search,meta) if not data.get("page_type") else ''}
+            {page_tags(search,meta)}
             
             <div class="categoryPage_topLeft">
                 <div class="categoryPage_topSort">
