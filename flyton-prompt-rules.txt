@@ -105,6 +105,12 @@ the Rules:
 - table "users"
 - table "logs" 
 - table "ses" - active sessions 
+- while writing code in python dont import the internal function one by one , use * fro them all , example 
+not good:
+from sql import find_in_sql, insert_to_sql
+good:
+from tools.sql import *
+
 
 More detaied instruction:
 this is the url : 
