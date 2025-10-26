@@ -165,3 +165,5 @@ The JS side will chack the answer:
 
 Also this is just an example, this is how ALL api works , meth= for action and inp= for data for this action.
 The "allow" answer can hold more data from the server , like this: server side api_ok({"more_data":3}) and the client see it in responseData["server"]["more_data"]
+
+To be able to create new Flyton code , you will need to read the code on https://github.com/yaweli/flyton/tree/main and the examples 
