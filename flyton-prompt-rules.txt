@@ -110,6 +110,7 @@ not good:
 from sql import find_in_sql, insert_to_sql
 good:
 from tools.sql import *
+- for writing code , you need to know the format of each function before generating code for it , do no guess , it better to reply with "dont have access to function foo" 
 
 
 More detaied instruction:
@@ -173,3 +174,64 @@ Also this is just an example, this is how ALL api works , meth= for action and i
 The "allow" answer can hold more data from the server , like this: server side api_ok({"more_data":3}) and the client see it in responseData["server"]["more_data"]
 
 To be able to create new Flyton code , you will need to read the code on https://github.com/yaweli/flyton/tree/main and the examples 
+
+
+The sql tables:
+desc users;
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field      | Type         | Null | Key | Default           | Extra                                         |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| id         | int          | NO   | PRI | NULL              | auto_increment                                |
+| username   | varchar(255) | YES  | UNI | NULL              |                                               |
+| LastName   | text         | YES  |     | NULL              |                                               |
+| FirstName  | text         | YES  |     | NULL              |                                               |
+| Roles      | json         | YES  |     | NULL              |                                               |
+| sis        | text         | YES  |     | NULL              |                                               |
+| is_active  | tinyint(1)   | YES  |     | 1                 |                                               |
+| created_at | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| update_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| data       | json         | YES  |     | NULL              |                                               |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+10 rows in set (0.00 sec)
+
+
+ desc ses; -- hold the real time sessions 
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field      | Type         | Null | Key | Default           | Extra                                         |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| id         | varchar(255) | NO   | PRI | NULL              |                                               |
+| user_id    | int          | YES  |     | NULL              |                                               |
+| is_active  | tinyint(1)   | YES  |     | 1                 |                                               |
+| created_at | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| update_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| data       | json         | YES  |     | NULL              |                                               |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+6 rows in set (0.00 sec)
+
+
+
+> desc gen; -- hold system wide parameters
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field      | Type         | Null | Key | Default           | Extra                                         |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| id         | int          | NO   | PRI | NULL              | auto_increment                                |
+| key1       | varchar(255) | YES  |     | NULL              |                                               |
+| val1       | varchar(255) | YES  |     | NULL              |                                               |
+| is_active  | tinyint(1)   | YES  |     | 1                 |                                               |
+| created_at | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| update_at  | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| data       | json         | YES  |     | NULL              |                                               |
++------------+--------------+------+-----+-------------------+-----------------------------------------------+
+7 rows in set (0.00 sec)
+
+> select * from gen;
++----+------+------+-----------+---------------------+---------------------+------+
+| id | key1 | val1 | is_active | created_at          | update_at           | data |
++----+------+------+-----------+---------------------+---------------------+------+
+| 10 | year | 2024 |         1 | 2024-06-14 10:34:27 | 2024-06-14 10:34:27 | NULL |
++----+------+------+-----------+---------------------+---------------------+------+
+1 row in set (0.00 sec)
+
+
+
+
