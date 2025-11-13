@@ -266,3 +266,9 @@ result:
 ![cardexample](fly1.png)
 
 
+- The txt() function is ability to support multi laguale platform , so every print of a native text need to use txt() if the system is define is multi liguale
+- the kicbutton() is a button facility, example:
+
+    h +=f"""
+            <span>{kicbutton("custactive", ses,"click for new", "btn btn-secondary btn-sm" , {"cont_id": id, "cust_id": cust_id, "ins": ins,"org_id":org ,"act" :"new"})}</span>
+    """
