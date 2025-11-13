@@ -3,10 +3,10 @@
 
 sys_mode = "dev" # "dev" or "prod"
 sys_root = "Myproject"
-sys_url  = "www.ra.yaw.red"
+sys_url  = "www.fly.yaw.red"
 
 # mysql codes
 hostname="localhost"
-username = "myproject"
-password = "***"
-database = "myproject"
+username = "fly"
+password = "1964"
+database = "fly"
