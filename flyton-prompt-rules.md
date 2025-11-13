@@ -267,7 +267,9 @@ result:
 ![cardexample](fly1.png)
 
 
-- The txt() function is ability to support multi laguale platform , so every print of a native text need to use txt() if the system is define is multi liguale
+- The txt() function is ability to support multi laguale platform , so every print of a native text need to use txt() if the system is define is multi liguale , to use it you need to import this way:
+from tools.kiclang  import *
+
 - the kicbutton() is a button facility, example:
 
     h +=f"""
