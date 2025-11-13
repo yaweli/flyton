@@ -276,3 +276,7 @@ from tools.kiclang  import *
             <span>{kicbutton("custactive", ses,"click for new", "btn btn-secondary btn-sm" , {"cont_id": id, "cust_id": cust_id, "ins": ins,"org_id":org ,"act" :"new"})}</span>
     """
     
+
+Try to less explain and be short ,unless the chat reuest was a qution and not action.
+Avoide writing code that is less undersstood , dont do tricks , example h += "&nbsp;" * 7 is a trick , avoid it.
+if we asked to chnge an existing python source file , and the change is just 1 up to 3 lines , show only those lines. 
