@@ -112,6 +112,7 @@ good:
 from tools.sql import *
 - for writing code , you need to know the format of each function before generating code for it , do no guess , it better to reply with "dont have access to function foo" 
 - if we use <style> with static instruction , use seperated file.css and put it in /lib/ , do not inject style in the html body
+- if we use <script> with static code , use seperated file.js in /lib/ , avoid injecting JS in the html , but for eventing do use the inline , for example onclick=run_my_js() is good , also if the are parameter do pass them via the funtion parameters
 
 More detaied instruction:
 this is the url : 
