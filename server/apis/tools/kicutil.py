@@ -1,9 +1,14 @@
 import os, sys
-from datetime import datetime, timedelta
+from datetime import datetime
 
 sys.path.append(os.path.dirname(__file__))
 from kiclang        import *
-from sql            import *
+
+# 
+# Ver: 2025.04.29.zne
+#
+
+
 #
 # add more param to url 
 #
@@ -37,6 +42,7 @@ def kicmenu(page,ses,title,cls="kicmenu"):
 def kicbutton(page,ses,title,cls="kicmenu",more={},app="start"):
     url=kicnav(page,ses,more,app)
     use=more.get("use","")
+    # print(use)
     return f'<button class="{cls}" onclick=kic_run_but("{url}","{use}")>{title}</button>'
 
 
@@ -48,18 +54,19 @@ def kicbutton0():
     return """
     <script>
     function kic_run_but(url,use){
-    
+        
         if (event.target.innerHTML) 
         {
             event.target.disabled=true;
             event.target.innerHTML = " ..המתן.. "; 
         }
+        
 
         if (typeof(use)!="undefined" && use.length)
         {
+        
             use.split("/").forEach(function (item) {
                 var el = document.getElementById(item) ; 
-                if (!el) return;
                 vvv = el.value;
                 if ( el.type=="radio") {
                     if ( el.checked ) 
@@ -110,11 +117,15 @@ def kic_collapse(title,explain,button_text,ses,page):
 #
 def kicselect(id,label,more={}):
     def1 = more["value"]
+    dis=""
+    if "disable" in more:
+        if more["disable"]:
+            dis=" disabled"
     return f"""
     <div style="width:300px" class="mb-3">
         <label for="{id}" class="form-label"> {label}</label>
 
-        <select id={id} name={id} class="form-select" aria-label="{id}">
+        <select id={id} name={id} class="form-select" aria-label="{id}" {dis}>
         {kicselect_def(more)}
         {kicselect_o(def1,more["data"])}
         </select>
@@ -135,11 +146,13 @@ def kicselect_o(def1,data):
         sel=""
         if id==def1:
             sel=" selected"
-        a += f"<option{sel} value={id}>{name}</option>"
+        a += f"<option{sel} value={id}>{name} - {id}</option>"
     return a
 
 
 def kiccard(title,title1,explain,button_text="",ses="",page="",more={}):
+    title1 = str(title1)
+    explain = str(explain)
     old = """
             <h5 class="card-header">
             <span>{title}</span>
@@ -148,8 +161,19 @@ def kiccard(title,title1,explain,button_text="",ses="",page="",more={}):
     strlen = "450px"
     if "width" in more:
         strlen = more["width"]
+    cls1=""
+    if "cls" in more:
+        cls1=more["cls"]
+    if "color" in more:
+        color=more["color"]
+        if color=="red":
+            cls1="bg-danger"
+        if color=="green":
+            cls1="bg-success"
+        if color=="grey":
+            cls1="bg-secondary"
     return f"""
-        <div class="card" style=width:{strlen}>
+        <div class="card {cls1}" style=width:{strlen}>
             <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">{txt(title)}</h5>
             <span class="ms-auto">{kic_icon(title,more)}</span>
@@ -232,76 +256,4 @@ def kic_date(h,format="%Y-%m-%d"):
         # Calculate the difference in days
         difference = date2 - date1        
         return difference
-    #                               vvv v vvvv        
-    if format.startswith("add "): # add 7 days 
-        f=format.split(" ")
-        q=int(f[1])
-        
-        if f[2]=="days":
-            return h + timedelta(days=q)
-        if f[2]=="hours":
-            return h + timedelta(hours=q)
-        if f[2]=="minutes":
-            return h + timedelta(minutes=q)
     return h.strftime(format)
-
-
-
-def kic_sort_obj( obj, fld="sort" , def_lev=1 ):
-    # return sorted(obj.items(), key=lambda item: item[1].get("sort", 1))
-    return sorted(obj.items(), key=lambda item: item[1].get(fld, def_lev))
-
-# def kic_print(obj , act="p"):
-#     if act=="p":
-#         print(" ( ")
-#         print(f"<pre style=text-align:left>{json.dumps(obj, indent=3)}</pre>")
-#         print(" ) ")
-#         return ""
-#     if act=="r":
-#         return f"~~ <pre>{json.dumps(obj, indent=2)}</pre> ~~"
-
-
-
-def ad_table(headers, rows):
-    html = '<table border="1" cellspacing="0" style="margin:auto; border-collapse:collapse;">\n'
-    html += '  <tr>\n'
-    for header in headers:
-        html += f'    <th style="padding: 10px 20px;">{header}</th>\n'
-    html += '  </tr>\n'
-    for row in rows:
-        html += '  <tr>\n'
-        for cell in row:
-            html += f'    <td style="padding: 10px 20px;">{cell}</td>\n'
-        html += '  </tr>\n'
-    html += '</table>'
-    return html
-    
-    
-def remove_field(field, table, id):
-    if not field or not table or not id:
-        return "Missing parameters"
-    
-    insert_to_sql({
-        "table": table,
-        "id": id,
-        "set": {field: ""}
-    })
-    return f"Field '{field}' cleared for ID {id} in table {table}"
-
-
-def link_follow(pg, field):
-    w = find_in_sql({
-        "table": "gen_pages",
-        "fld":   "subj",
-        "val":   "link",
-        "what":  "val",
-        "where": {"page": pg, "fld": field},
-    })
-    if type(w) is bool:
-        return ""
-    result = int(w[0]) 
-    if result == 0:
-        return 'rel="nofollow"'
-    if result == 1:
-        return 'rel="follow"'
-    return ""
