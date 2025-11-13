@@ -234,4 +234,23 @@ desc users;
 
 
 
+more code methodology:
+example of python code for generating html on the fly:
+h = "<div>"
+h += f"""  <div id=section2>
+              <div>{name}</div>
+           </div>
+     """
+return h
+     
+so try to use the "h" variable for aal html dynamic content, 
+try to ident the html nicely like this example,
+if you dont have to dont use quotes in id= in this example id=section2 no have to be id="section2"
+
+
+
+
+example of card , there is a function kiccard() , which provide this nice card style menu item : 
+![cardexample](fly1.png)
+
 
