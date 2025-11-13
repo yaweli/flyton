@@ -279,4 +279,6 @@ from tools.kiclang  import *
 
 Try to less explain and be short ,unless the chat reuest was a qution and not action.
 Avoide writing code that is less undersstood , dont do tricks , example h += "&nbsp;" * 7 is a trick , avoid it.
-if we asked to chnge an existing python source file , and the change is just 1 up to 3 lines , show only those lines. 
+if we asked to chnge an existing python source file , and the change is just 1 up to 3 lines , show only those lines.
+
+don't use function or variable names start with just a _ , always use lower case , avoide _ but if you need add _
