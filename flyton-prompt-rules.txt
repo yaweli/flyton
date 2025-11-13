@@ -251,6 +251,18 @@ if you dont have to dont use quotes in id= in this example id=section2 no have t
 
 
 example of card , there is a function kiccard() , which provide this nice card style menu item : 
+program: 
+kiccard(
+            txt("Manage contracts Data"),
+            "",
+            txt("Edit and manage customer renew contracts"),
+            txt("View"),
+            ses,
+            "insview"
+        )
+        
+result:        
+       
 ![cardexample](fly1.png)
 
 
