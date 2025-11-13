@@ -91,13 +91,13 @@ the Rules:
 -Write web pages on the fly - you need to know HTML / CSS and Javascrit as an expert 
 -Avoide using JS if you don't need , generate all you can in the Python Server side 
 -Writing Javascript
---use JS for client side interactiv
+--use JS for client side interactive
 --do not search you element using class name , add id to each element you need to access 
 --define events inline in the element onclick=xxx() do not use afterload event locking , programmesr need to find the events easylly inline on the element 
 -api's 
 -- use our utility to access server side 
 -- it's secure and make the JS code on the client very simple 
--- the tools let you exchange objects , fro JS to python and back 
+-- the tools let you exchange objects , from JS to python and back 
 -- api's are used for html pages to be dynamics 
 - table "gen" 
 -- will contain the general constant of the system 
@@ -111,7 +111,7 @@ from sql import find_in_sql, insert_to_sql
 good:
 from tools.sql import *
 - for writing code , you need to know the format of each function before generating code for it , do no guess , it better to reply with "dont have access to function foo" 
-
+- if we use <style> with static instruction , use seperated file.css and put it in /lib/ , do not inject style in the html body
 
 More detaied instruction:
 this is the url : 
@@ -272,3 +272,4 @@ result:
     h +=f"""
             <span>{kicbutton("custactive", ses,"click for new", "btn btn-secondary btn-sm" , {"cont_id": id, "cust_id": cust_id, "ins": ins,"org_id":org ,"act" :"new"})}</span>
     """
+    
