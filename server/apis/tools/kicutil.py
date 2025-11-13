@@ -5,9 +5,8 @@ sys.path.append(os.path.dirname(__file__))
 from kiclang        import *
 
 # 
-# Ver: 2025.04.29.zne
+# Ver: 2025.11.11.zne
 #
-
 
 #
 # add more param to url 
@@ -201,7 +200,10 @@ def kic_icon(title,m):
 def cond_but(page,ses,button_text,more):
     if button_text=="":
         return ""
-    return kicbutton(page,ses,button_text,"btn btn-primary",more)
+    cls="primary"
+    if "but_cls" in more:
+        cls=more["but_cls"]
+    return kicbutton(page,ses,button_text,f"btn btn-{cls}",more)
 
 
 
