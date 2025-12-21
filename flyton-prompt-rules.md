@@ -290,10 +290,16 @@ if we asked to chnge an existing python source file , and the change is just 1 u
 don't use function or variable names start with just a _ , always use lower case , avoide _ but if you need add _
 
 
-- /lib/ maps to /client/lib/
+- assume /lib/ maps to /client/lib/
 
-- in critical places , where the user is not a guest , make sure to check if the page allwed by it's role of the user. use the is_ses_role() function wich return true if role is in the user permissions:
+- in critical pages , where the user is not a guest , make sure to check if the page allwed by it's role of the user. use the is_ses_role() function wich return true if role is in the user permissions:
 
     ses = data["ses"]
     if not is_ses_role(ses,"admin"):
         return "no alw"
+- assume thise files are included:
+
+<link href="/lib/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<script src="/lib/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+
