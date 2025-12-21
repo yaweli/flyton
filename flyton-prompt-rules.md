@@ -291,3 +291,9 @@ don't use function or variable names start with just a _ , always use lower case
 
 
 - /lib/ maps to /client/lib/
+
+- in critical places , where the user is not a guest , make sure to check if the page allwed by it's role of the user. use the is_ses_role() function wich return true if role is in the user permissions:
+
+    ses = data["ses"]
+    if not is_ses_role(ses,"admin"):
+        return "no alw"
