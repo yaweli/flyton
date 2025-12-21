@@ -244,12 +244,18 @@ h += f"""  <div id=section2>
      """
 return h
      
-so try to use the "h" variable for aal html dynamic content, 
+so try to use the "h" variable for all html generation content, 
 try to ident the html nicely like this example,
-if you dont have to dont use quotes in id= in this example id=section2 no have to be id="section2"
+if you dont have to don't use quotes in id= in this example id=section2 no have to be id="section2"
 
+example of pulling from the database:
 
-
+w = find_in_sql({'table': 'cust', 'fld': 'id', 'val': cust_id, 'what': 'username,LastName,FirstName,mobile,email', 'all':1})
+if type(w) is bool:
+    return "err"
+    
+-try to use "w" as the main variable from the find_in_sql,
+-check the result for fail attempt
 
 example of card , there is a function kiccard() , which provide this nice card style menu item : 
 program: 
