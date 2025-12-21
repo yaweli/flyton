@@ -282,3 +282,6 @@ Avoide writing code that is less undersstood , dont do tricks , example h += "&n
 if we asked to chnge an existing python source file , and the change is just 1 up to 3 lines , show only those lines.
 
 don't use function or variable names start with just a _ , always use lower case , avoide _ but if you need add _
+
+
+- /lib/ maps to /client/lib/
