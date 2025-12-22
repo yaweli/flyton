@@ -1,0 +1,15 @@
+#!/usr/bin/python3 
+#
+# (c) flyton 2025
+
+print("content-type: application/json")
+print("")
+
+from runpy import run_path
+try:
+    settings = run_path("/data/fly/server/apis/cgi.py")
+except Exception as e:
+    print(f"internal API kicdev : An error occurred: {e}")
+
+
+# called from cgi-bin/api 

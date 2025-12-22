@@ -2,7 +2,7 @@
 # note : this file in the .gitignore
 
 sys_mode = "dev" # "dev" or "prod"
-sys_root = "fly"
+sys_root = "Myproject"
 sys_url  = "www.fly.yaw.red"
 
 # mysql codes
