@@ -3,6 +3,7 @@ FROM ubuntu:22.04
 
 # Set environment non-interactive to prevent prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
+ENV MYSQL_DATABASE=fly
 
 # Update package list and install Apache2, MySQL client, and PHP with MySQL support
 RUN apt-get update && \
@@ -10,7 +11,6 @@ RUN apt-get update && \
     pip install mysql-connector-python && \
     a2enmod cgi && \
     mkdir -p /var/log/supervisor /var/run/mysqld && \
-    mkdir -p /var/www/cgi-bin && \
     mkdir -p /data && \
     mkdir -p /data/fly && \
     mkdir -p /data/fly/server && \
@@ -34,19 +34,34 @@ RUN apt-get update && \
 # Copy website files from your local directory to the Apache web root
 # Make sure your website files are in the same directory as the Dockerfile
 COPY ./html/index.html  /var/www/html/
-COPY ./html/login_index.html  /var/www/html/pages/login/
-COPY ./fly_config.py /data/fly/server/
-COPY ./lib/*         /data/fly/client/lib/
-COPY ./cgi/*         /data/fly/server/cgi-bin/
-COPY ./cgi.py         /data/fly/server/apis/
-COPY ./tools/*        /data/fly/server/apis/tools/
+COPY ./html/login_index.html  /var/www/html/pages/login/index.html
+COPY ./fly_config.py /data/fly/server/config.py
+COPY ./lib/*        /data/fly/client/lib/
+COPY ./cgi/*       /data/fly/server/cgi-bin/
+COPY ./cgi.py     /data/fly/server/apis/
+COPY ./tools/*   /data/fly/server/apis/tools/
+COPY ./init.sql /tmp/
+COPY ./api_login.py /data/fly/server/apis/api/api_login.py
+COPY ./start.py /data/fly/client/app/start.py
+COPY ./html/admin/* /data/fly/client/app/admin/
+
+# create database , and startuop tables 
+RUN service mysql start && \
+    mysql < /tmp/init.sql && \
+    service mysql stop
+
 
 # Apache CGI conf (for /cgi-bin/, AddHandler .py)
 COPY ./apache2.conf /etc/apache2/
 COPY ./serve-cgi-bin.conf   /etc/apache2/conf-enabled/
 COPY ./000-default.conf /etc/apache2/sites-enabled/
-RUN ln -s /data/fly/client/pages /var/www/html/
-RUN ln -s /data/fly/client/lib /var/www/html/
+RUN ln -s /data/fly/server/cgi-bin /var/www/cgi-bin
+RUN ln -s /data/fly/client/pages /var/www/html/pages
+RUN ln -s /data/fly/client/lib /var/www/html/lib
+RUN ln -s /data/fly/client/app /var/www/html/app
+RUN ln -s /data/fly/server/apis/tools /data/fly/client/app/tools
+RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN ln -s /data/fly/server/cgi-bin /data/fly/client/app/cgi-bin
 #RUN echo 'ScriptAlias /cgi-bin/ /opt/flyton/server/apis/\n<Directory "/opt/flyton/server/apis">\nAllowOverride None\nOptions +ExecCGI -MultiViews +SymLinksIfOwnerMatch\nRequire all granted\nAddHandler cgi-script .py\n</Directory>' >> /etc/apache2/apache2.conf
 
 # MySQL init script (if data dir empty, init, then start)
@@ -75,10 +90,7 @@ EXPOSE 80
 # Run Supervisor to manage both processes automatically on container start
 CMD ["/usr/bin/supervisord", "-n"]
 
-
-
-
-
+# --no-cache
 # install : cd /home/fly/Flyton/install/docker && docker build -t flyton1 .
 # run     : docker run -d --name fly  -p 8080:80 flyton1
 # enter into the container:   docker exec -i -t fly /bin/bash
@@ -90,6 +102,8 @@ CMD ["/usr/bin/supervisord", "-n"]
 # docker stop fly
 # docker restart fly
 # docker rm fly
+#
+# docker stop fly && docker rm fly
 
 
 
@@ -99,3 +113,6 @@ CMD ["/usr/bin/supervisord", "-n"]
 #docker tag flyton yaweli/flyton:v1
 
 # docker push yaweli/flyton:v1 
+
+# docker system prune
+
