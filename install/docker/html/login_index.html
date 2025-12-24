@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="copyrights" content="yaweli" />
+    <title></title>
+    <link href="../../lib/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            text-align: center;
+        }
+        .logo img {
+            /* Replace with your logo image */
+        }
+    </style>
+    
+    
+    <script>
+
+/* global go_green */
+/* global go_red */
+/* global go_el */
+/* global go_clean */
+/* global call_server */
+
+async function check_user(meth,inp) {
+    
+    var responseData = await call_server(meth,inp) ; // call_Server = = FLYTON 
+    //                                               // inp -> # inp <- Object 
+    if( !responseData ) {
+        alert("server error");
+    } else {
+        console.log(responseData);
+        if ( responseData["server"]["allow"] )   // allow  1 = OK   0 = fail 
+        {
+            go_green(go_el("password"));
+            let ses = responseData["server"]["ses"] ; 
+            sessionStorage.setItem("ses",ses); 
+
+            setTimeout(function(){ 
+                document.location="/cgi-bin/p?app=start&r=309012&ses="+ses; // see client/app/start.py     
+                //                                ^^^^^                                       ^^^^^
+                //                                               ^^^ ses = privet of 
+            }, 500);
+
+        }
+        else {
+            go_red(go_el("password"));
+        }
+    }
+}
+
+    
+
+
+    function cuser(el)
+    {
+        let u = el.value;
+        if( u.length>2 ) {
+            go_green(el);
+            return true;
+        }
+        else {
+            go_red(el);
+            return false;
+        }
+    }
+    function cpass(el)
+    {
+        let p = el.value;
+        if( p.length<4 ) {
+            go_red(el);
+            return false;
+        } 
+        go_clean(el);
+        return btoa(p);
+    }
+    
+    function run_submit(e)
+    {
+        // client side
+        e.preventDefault();
+        let u = document.getElementById("username");
+        if (!cuser(u)) return;
+
+        let p = document.getElementById("password");
+        let penc = cpass(p);
+        if( !penc )  return;
+
+        // server side
+        //          api_login.py 
+        // check_user("api_login",{u:u.value,p:penc, raja: 100});
+        check_user("api_login",{u:u.value,p:penc});
+        //                     {u:"Yosi" ,p:"ACACACA"}
+        //                      ^         ^ 
+
+    }
+</script>
+
+<!-- Include Bootstrap JS (optional) -->
+<script src="../../lib/bootstrap.bundle.min.js"></script>
+<script src="../../lib/kicdev.server.js"></script>
+<script src="../../lib/kicdev.bs5.js"></script>
+
+    
+    
+    
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="../im/logo1.png" />
+        </div>
+        <form name=f1 class="needs-validation">
+            <div class="mb-3">
+                <label for="username" class="form-label">משתמש</label>
+                <input type="text" class="form-control" name="username" id="username" placeholder="Enter your username" onchange=cuser(this) >
+                    <div id="usernamefeedback" class="invalid-feedback">
+                        You must enter valid username.
+                    </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Enter your password"  onchange=cpass(this)>
+            </div>
+            <button onClick=run_submit(event) type="submit" class="btn btn-warning">Connect</button>
+        </form>
+    </div>
+
+
+
+
+</body>
+</html>

@@ -22,6 +22,7 @@ RUN apt-get update && \
     mkdir -p /data/fly/client/lib && \
     mkdir -p /data/fly/client/pages && \
     mkdir -p /data/fly/client/pages/im && \
+    mkdir -p /data/fly/client/pages/login && \
     mkdir -p /data/fly/client/app && \
     mkdir -p /data/fly/client/app/weba && \
     mkdir -p /data/fly/client/app/admin && \
@@ -33,6 +34,7 @@ RUN apt-get update && \
 # Copy website files from your local directory to the Apache web root
 # Make sure your website files are in the same directory as the Dockerfile
 COPY ./html/index.html  /var/www/html/
+COPY ./html/login_index.html  /var/www/html/pages/login/
 COPY ./fly_config.py /data/fly/server/
 COPY ./lib/*         /data/fly/client/lib/
 COPY ./cgi/*         /data/fly/server/cgi-bin/
@@ -91,3 +93,9 @@ CMD ["/usr/bin/supervisord", "-n"]
 
 
 
+# docker login -u yaweli
+# docker build -t yaweli/flyton:v1 .
+
+#docker tag flyton yaweli/flyton:v1
+
+# docker push yaweli/flyton:v1 
