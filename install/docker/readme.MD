@@ -18,12 +18,19 @@ try to browse : curl http://127.0.0.1:8080
 '''
 
 
+# Install from docker Hub: 
+
+docker login 
+
+docker pull yaweli/flyton:v1
+
+# run
+
+docker run -d --name fly  -p 8080:80 flyton1
 
 
+try to browse : curl http://127.0.0.1:8080
 
-docker stop fly
+or              http://myserver_ip:8080
 
-docker restart fly
-
-docker rm fly
 
