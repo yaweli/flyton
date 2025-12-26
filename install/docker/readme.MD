@@ -1,4 +1,5 @@
 # Install flyton under DOCKER
+on you linux machine , ubuntu , preffered on AWS:
 
 
 
