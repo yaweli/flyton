@@ -34,7 +34,11 @@ try to browse : curl http://127.0.0.1:8080
 
 or              http://myserver_ip:8080
 
-# What's it good for:
+Dont forget to wrap this url with https://my_domain.com with map to 8080 using CloudFront and CertManager on AWS
+
+
+
+# What it's good for:
 
 This is a pulic project , it's a full server side plus client side , python based environment
 
