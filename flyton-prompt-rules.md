@@ -346,3 +346,19 @@ should be like this:
              {userslist(data, total)}
              <hr>
     """
+
+
+- example how to work with sql_order:
+    id = ""
+    for obj in sql_order({'table': 'users', 'id': id}):
+        id = obj["id"]
+        h += f"""
+        <tr>
+        <td>{obj["id"]}</td>
+        <td>{obj["username"]}</td>
+        <td>{obj["LastName"]}</td>
+        <td>{obj["FirstName"]}</td>
+        <td>{obj["Roles"]}</td>
+        </tr>
+        """
+
