@@ -303,3 +303,33 @@ don't use function or variable names start with just a _ , always use lower case
 <script src="/lib/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 
+-to get the gen table , which hold general data about the project you have function name gen_dat , use it gen = gen_data() ,
+for example the roles table are in the gen , the gen array look like this:
+    gen = gen_data()
+    print(gen)
+
+{
+  'year': {
+    'id': 10,
+    'val': '2024'
+  },
+  'days2renew': {
+    'id': 16,
+    'val': '230'
+  },
+  'inload': {
+    'id': 26,
+    'val': '0'
+  },
+  'roles': {
+    'id': 106,
+    'val': '0',
+    'data': {
+      'admin': 'Admin',
+      'owner': 'Owner',
+      'lmanager': 'leads manager'
+    }
+  }
+}
+
+example , if i need all the Roles , the gen_data() return object and i will take the gen["roles"]["data"]
