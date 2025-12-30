@@ -333,3 +333,5 @@ for example the roles table are in the gen , the gen array look like this:
 }
 
 example , if i need all the Roles , the gen_data() return object and i will take the gen["roles"]["data"]
+
+- while programming a front with html , use print(f"""    a lot of html """) instead if just print("...html...") , with """ you can ident new line so the html code will look good
