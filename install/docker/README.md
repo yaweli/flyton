@@ -25,9 +25,9 @@ docker login
 
 docker pull yaweli/flyton:v1
 
-# run
+# run first time
 
-docker run -d --name fly  -p 8080:80 flyton1
+docker run -d --name fly  -p 8080:80 yaweli/flyton:v1
 
 
 try to browse : curl http://127.0.0.1:8080
@@ -35,6 +35,11 @@ try to browse : curl http://127.0.0.1:8080
 or              http://myserver_ip:8080
 
 Dont forget to wrap this url with https://my_domain.com with map to 8080 using CloudFront and CertManager on AWS
+
+
+
+docker run -d -p 8080:80 -v /data/webkic/pages:/data/fly/client/pages 75f90f8289c9
+
 
 
 
