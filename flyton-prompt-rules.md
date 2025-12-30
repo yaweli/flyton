@@ -362,3 +362,8 @@ should be like this:
         </tr>
         """
 
+- if you need to jump to other page inside JS , take the url from this function from the server , kicnav()
+- example of kicnav : url = kicnav("insview2add1",ses,{"act":"add","cont_id":cont_id,"occ_id":3}) and inject it to the client side like this 
+<script>
+let next_url = "{url}";
+</script>
