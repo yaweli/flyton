@@ -20,8 +20,9 @@ the Rules:
 -- static pages HTMR/CSS/JS/assets 
 -Mysql 
 -- all acces via one utiity , sql.py with read/write/delete ready made functions
---- read find_in_sql() for low size tables (return full results)  or sql_order() for havy size tables which uses yield instead of return the full array
---- write/update insert_to_sql()
+--- read from the source code sql.py the function find_in_sql() for low size tables (return full results)  or sql_order() for heavy size tables which uses yield instead of return the full array
+--- for write/update records to table use insert_to_sql()
+--- sql_order() have only those parameters, table,id,where note how id works , you need to start from id="" pass it the first time, and the next time you will get the next id , if the table arrivesd to the end , it will return id="" where there you will know on the loop you got to the end
 --All tables in the database will have the same structure
 ---the unique id "id" - most of the time will be integer , autoIncrement , start with 4 digit or 5 digit for convineint , some talbes will strat with 300 , some with 4000 - so id's in the system will be easy to recognize , amount of digits will be design for the amount of maximum records we intesipate
 ---field "name" - text
