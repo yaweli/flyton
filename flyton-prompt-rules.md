@@ -255,7 +255,7 @@ w = find_in_sql({'table': 'cust', 'fld': 'id', 'val': cust_id, 'what': 'username
 if type(w) is bool:
     return "err"
     
--try to use "w" as the main variable from the find_in_sql,
+-try to use "w" as the main variable from the find_in_sql for all tables,
 -check the result for fail attempt
 
 example of card , there is a function kiccard() , which provide this nice card style menu item : 
