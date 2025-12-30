@@ -336,3 +336,14 @@ example , if i need all the Roles , the gen_data() return object and i will take
 
 - while programming a front with html , use print(f"""    a lot of html """) instead if just print("...html...") , with """ you can ident new line so the html code will look good
 - each source of code , put in a windows so the copy will be easy
+- 
+
+combine a lot of html line to one line with """ , for example, this:
+    h += "<hr>"
+    h += userslist(data, total)
+    h += "<hr>"
+should be like this:
+    h += f"""<hr>
+             {userslist(data, total)}
+             <hr>
+    """
