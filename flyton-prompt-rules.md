@@ -106,17 +106,17 @@ the Rules:
 - table "users"
 - table "logs" 
 - table "ses" - active sessions 
-- while writing code in python dont import the internal function one by one , use * fro them all , example 
-not good:
-from sql import find_in_sql, insert_to_sql
+- while writing code in python dont import the internal function one by one , use * from them all , example 
 good:
 from tools.sql import *
+bad:
+from sql import find_in_sql, insert_to_sql
 - for writing code , you need to know the format of each function before generating code for it , do no guess , it better to reply with "dont have access to function foo" 
 - if we use <style> with static instruction , use seperated file.css and put it in /lib/ , do not inject style in the html body
 - if we use <script> with static code , use seperated file.js in /lib/ , avoid injecting JS in the html , but for eventing do use the inline , for example onclick=run_my_js() is good , also if the are parameter do pass them via the funtion parameters
 
 More detaied instruction:
-this is the url : 
+example of a project url:
 https://www.ra.yaw.red/cgi-bin/p?app=start&r=309012&ses=2a866fc021714b6ab459bb3d03421&rpage=dashboard
 
 explain: 
