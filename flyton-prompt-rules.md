@@ -367,3 +367,5 @@ should be like this:
 <script>
 let next_url = "{url}";
 </script>
+
+- in api see example in server/apis/api/api_save_last_qr for how to retur ok answer and err answer , and save parameters in session 
