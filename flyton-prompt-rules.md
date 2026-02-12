@@ -282,7 +282,8 @@ from tools.kiclang  import *
     h +=f"""
             <span>{kicbutton("custactive", ses,"click for new", "btn btn-secondary btn-sm" , {"cont_id": id, "cust_id": cust_id, "ins": ins,"org_id":org ,"act" :"new"})}</span>
     """
-    
+- with the kicbutton as a Save button , you will want to get the other FORM <input> elements , you direct he kicbutton to load those variables 
+  by using this "use":"username/mobile/Firstname/Lastname" which are all an id's in the <input> tag , ex: <input id="username" name="username" value="default"> 
 
 Try to less explain and be short ,unless the chat reuest was a qution and not action.
 Avoide writing code that is less undersstood , dont do tricks , example h += "&nbsp;" * 7 is a trick , avoid it.
