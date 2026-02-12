@@ -38,7 +38,7 @@ the Rules:
 --mysql shell in linux - we use the shell only - so programmers will be use to use SQL commands - not a web platform 
 -writing code
 --Simple
----if you have 4 way of writing - do the simp[e way
+---if you have 4 way of writing - do the simple way
 ---avoid "else" or "elif" - when a programmer read a code - it's more easy to read condition with no "else"
 --all conditions 0-faluse 1-true -- do not use Tru of python or 'true' of javascript. 
 --using an f-string as a main function to embeded a variable into the string of the HTML you generate
@@ -368,4 +368,5 @@ should be like this:
 let next_url = "{url}";
 </script>
 
-- in api see example in server/apis/api/api_save_last_qr for how to retur ok answer and err answer , and save parameters in session 
+- in api see example in server/apis/api/api_save_last_qr for how to retur ok answer and err answer , and save parameters in session
+- 
