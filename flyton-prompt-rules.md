@@ -370,4 +370,30 @@ let next_url = "{url}";
 </script>
 
 - in api see example in server/apis/api/api_save_last_qr for how to retur ok answer and err answer , and save parameters in session
-- 
+
+
+get table methodology: 
+in gen table we store a general small tables , but we have some naming suffix , which need to be kept as new standrd
+_type - small list   - tables that means type of somthing 
+_dict - small object - representations of the code and name behind a field , see examples , most of the time we will explain the "is_active" field of a table , but we can explain not only the "is_active" but any field of table.
+_prov - small list   - providers (suppliers) 
+see the source db_tab.py using list_tab_dict() and get_gen_tab() to get the table as a list or object
+examples: 
++----+-------------+------+-----------+--------------------------------------------------------------------------------------------------------------------------+
+| id | key1        | val1 | is_active | data                                                                                                                     |
++----+-------------+------+-----------+--------------------------------------------------------------------------------------------------------------------------+
+| 41 | ast_type    | 0    |         1 | ["email", "vm", "license", "phone", "persona", "card", "vps", "vpn"]                                                     |
+| 45 | enc_type    | 0    |         1 | ["base64", "AESGCM128bit"]                                                                                               |
+| 47 | os_type     | 0    |         1 | ["linux", "windows", "android"]                                                                                          |
+| 49 | route_type  | 0    |         1 | ["vpn", "residential_proxy"]                                                                                             |
+| 50 | status_type | 0    |         1 | ["draft", "ready", "provisioning", "connected", "error", "archived"]                                                     |
+| 55 | sens_type   | 0    |         1 | ["white", "grey", "green", "black"]                                                                                      |
+| 76 | sim_type    | 0    |         1 | ["physical", "esim", "virtual-sim-account"]                                                                              |
+| 51 | worksp_dict | 0    |         1 | {"is_active": {"0": "archived", "1": "ready", "3": "draft", "10": "connected", "13": "in progress"}}                     |
+| 52 | ast_dict    | 0    |         1 | {"is_active": {"0": "pending", "1": "free", "2": "active", "12": "rotating", "13": "suspended", "15": "decommissioned"}} |
+| 53 | proj_dict   | 0    |         1 | {"is_active": {"0": "archived", "1": "active", "2": "planning"}}                                                         |
+| 61 | email_prov  | 0    |         1 | ["gmail", "outlook", "others"]                                                                                           |
+| 65 | vps_prov    | 0    |         1 | ["AWS", "hetzner", "DigitalOcean", "Vultr", "proxmox"]                                                                   |
+| 85 | social_prov | 0    |         1 | ["twitter", "linkedin", "telegram", "instagram", "facebook", "other"]                                                    |
++----+-------------+------+-----------+--------------------------------------------------------------------------------------------------------------------------+
+18 rows in set (0.00 sec)
