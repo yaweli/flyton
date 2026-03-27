@@ -107,9 +107,9 @@ the Rules:
 - table "logs" 
 - table "ses" - active sessions 
 - while writing code in python dont import the internal function one by one , use * from them all , example 
-good:
+this way:
 from tools.sql import *
-bad:
+not this way: 
 from sql import find_in_sql, insert_to_sql
 - for writing code , you need to know the format of each function before generating code for it , do no guess , it better to reply with "dont have access to function foo" 
 - if we use <style> with static instruction , use seperated file.css and put it in /lib/ , do not inject style in the html body
