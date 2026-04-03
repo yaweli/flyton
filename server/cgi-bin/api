@@ -1,16 +1,38 @@
-#!/usr/bin/python3 
-
+#!/usr/bin/python3
+#
+# (c) flyton
+#
+# ver 2.01
+# support CORS
+# e.s. 03.04.2026
+#################
+import os
 
 print("content-type: application/json")
-print("")
-
-myproj = "Myproj"
-
-from runpy import run_path
-try:
-    settings = run_path(f"/data/{myproj}/server/apis/cgi.py")
-except Exception as e:
-    print(f"internal API kicdev : An error occurred: {e}")
 
 
-# called from cgi-bin/api 
+env=os.environ
+qm=env.get("REQUEST_METHOD")
+if qm=="OPTIONS":
+    print("""Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+Access-Control-Allow-Headers: Content-Type
+Access-Control-Max-Age: 86400
+
+    {}
+    """)
+else:    
+
+
+    print("")
+
+    myproj = "Myproj"
+
+    from runpy import run_path
+    try:
+        settings = run_path(f"/data/{myproj}/server/apis/cgi.py")
+    except Exception as e:
+        print(f"internal API kicdev : An error occurred: {e}")
+
+
+    # called from cgi-bin/api 
