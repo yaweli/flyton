@@ -26,7 +26,6 @@
 - **Directory Structure**:
   - `server/`
   - `client/`
-  - `admin/`
 
 ## 🛠 Tools & Methodologies
 
@@ -48,8 +47,7 @@ Flyton prioritizes:
 ## 🚀 Code Example
 
 ```python
-# hello.py — Flyton CGI script
-print("Content-Type: text/html\n")
+# hello.py
 name = "World"
 print(f""" 
 <html>
@@ -95,14 +93,39 @@ def page_top(data):
         </div>           
     """
 
-
-
-
-
-
-
-
 ```
 
+
+## Example 3: Button
+
+In Flyton, buttons are created with `kicbutton()` — a utility that builds a `<button>` tag wired to the Flyton navigation system. The button navigates to a page, passing the session and any extra parameters automatically.
+
+```python
+from tools.kicutil import *
+
+def my_page(data):
+    ses = data["ses"]
+
+    # Render the JS handler once (before any buttons on the page)
+    print(kicbutton0())
+
+    print(f"""
+    <html>
+    <body>
+        <h1>Welcome</h1>
+
+        <!-- Simple button: navigates to "dashboard" page -->
+        {kicbutton("dashboard", ses, "Go to Dashboard", "btn btn-primary")}
+
+        <!-- Button with extra parameters passed in the URL -->
+        {kicbutton("product", ses, "View Product", "btn btn-secondary", {{"id": "42"}})}
+    </body>
+    </html>
+    """)
+```
+
+- `kicbutton(page, ses, title, cls, more)` — generates a `<button>` that calls `kic_run_but()` on click.
+- `kicbutton0()` — outputs the required `<script>` block; call it once per page before any buttons.
+- `more` — a dict of extra URL parameters (e.g. `{{"id": "42"}}`).
 
 > Flyton: Write in Python. Fly on the web.
