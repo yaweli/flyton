@@ -1,4 +1,6 @@
 
+![Flyton Logo](fly-logo.png)
+
 # Flyton
 
 **Flyton** is a non-framework, Python based web development environment that generates HTML pages on the fly
