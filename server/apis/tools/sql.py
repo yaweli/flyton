@@ -14,6 +14,9 @@
 # Version 2.12 - ra - multi join
 # Version 2.13 - ra - sql_what - select from data 
 # Version 2.14 - ra - sql_sort
+# Version 2.15 - bri - where={}
+# Version 2.16 - support microFlyton sqlite , t.b.c
+# Version 2.17 - bri - support microFlyton mysql + kic_sql_connect()
 #
 import os, sys, json, re
 from datetime import datetime
@@ -22,20 +25,29 @@ sys.path.insert(0, '/usr/local/lib/python3.10/dist-packages')
 import importlib.util
 import mysql.connector
 
-sql_v =2.14
+sql_v =2.17
+
+def kic_sql_connect():
+  config = kic_config()
+  use_pure = getattr(config, "sys_fly", 0)  # flyton = 0, microFlyton=1
+  connection = mysql.connector.connect(
+      host=config.hostname,
+      user=config.username,
+      password=config.password,
+      database=config.database,
+      use_pure=use_pure
+  )
+  return connection
+
 
 def find_in_sql(r):
-    #r["debug"]=1  
     config = kic_config()
 
     try:
+      
       # Connect to the MySQL database
-      connection = mysql.connector.connect(
-          host=config.hostname,
-          user=config.username,
-          password=config.password,
-          database=config.database
-      )
+      connection = kic_sql_connect()
+
       cursor = connection.cursor()
       c = 0
       table=r['table']
@@ -48,7 +60,7 @@ def find_in_sql(r):
           g=""
         q += f"{g}{fld}{g}={kic_geresh(r['val'])}"
         c=c+1
-      if "where" in r:
+      if "where" in r and r["where"]!={}:
         if c:
           q += " AND "
         q1,c1 = sql_where(r['where'])
@@ -91,22 +103,18 @@ def find_in_sql(r):
 
 # insert or update sql 
 #
-# w=insert_to_sql({'table':'cust_cont_occ','id':{'cont_id':cont_id,'occ_id':occ_id}'set':'is_active=0'})
+# r=insert_to_sql({'table':'cust_cont_occ','id':{'cont_id':cont_id,'occ_id':occ_id}'set':'is_active=0'})
+# if r["status"]:
+#   print("ok")
 # update example: w=insert_to_sql({'table':'cust_cont_occ','id':id,'set':'is_active=0'})
 # insert example: t=insert_to_sql({'table':'import','set':f"type='cust',count={count}",'data':newdata})
 
 
 def insert_to_sql(r):
 
-    config = kic_config()
     tera_id= -1
     try:
-      connection = mysql.connector.connect(
-          host=config.hostname,
-          user=config.username,
-          password=config.password,
-          database=config.database
-      )
+      connection = kic_sql_connect()
       cursor = connection.cursor()
       setdata=''
       set1=sql_set(r["set"])
@@ -147,18 +155,9 @@ def insert_to_sql(r):
 
 
 def count_in_sql(r):
-    file_path = "../config.py"
-    spec = importlib.util.spec_from_file_location("config", file_path)
-    config = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(config)
-    
+
     try:
-      connection = mysql.connector.connect(
-          host=config.hostname,
-          user=config.username,
-          password=config.password,
-          database=config.database
-      )
+      connection = kic_sql_connect()
       cursor = connection.cursor()
       query = f"SELECT COUNT(id) FROM {r['table']} where {r['fld']}='{r['val']}'"
       cursor.execute(query)
@@ -204,6 +203,7 @@ def get_data(table,id,fld="id"):
     obj=json.loads(z[0])
   return obj
 
+
 #
 # take the data field (json) add info init
 #
@@ -248,18 +248,9 @@ def get_next_counter(field, type1 , data={}):
 #
 #####################
 def kic_sql(q,elr=0):
-    file_path = "../config.py"
-    spec = importlib.util.spec_from_file_location("config", file_path)
-    config = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(config)
-    
+
     try:
-      connection = mysql.connector.connect(
-          host=config.hostname,
-          user=config.username,
-          password=config.password,
-          database=config.database
-      )
+      connection = kic_sql_connect()
       cursor = connection.cursor()
     
       cursor.execute(q)
