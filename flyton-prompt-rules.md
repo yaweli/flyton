@@ -397,3 +397,5 @@ examples:
 | 85 | social_prov | 0    |         1 | ["twitter", "linkedin", "telegram", "instagram", "facebook", "other"]                                                    |
 +----+-------------+------+-----------+--------------------------------------------------------------------------------------------------------------------------+
 18 rows in set (0.00 sec)
+
+- each item in the sql table , example "part" will have a db_part.py which will handle the read/write to the table , we will have a part_list() , part_get() , and for adding new part we will have part_chk() to chaeck before adding , and a part_add() , part_chk will return a fix version of the input of the fields , so if a record is phone number "052-3232323" it may return a clean version "0523232323" which this will be saved to the sql
