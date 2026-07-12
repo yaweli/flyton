@@ -16,3 +16,30 @@
 8. cp $src/serve-cgi-bin.conf /etc/apache2/conf-enabled/
 9. cp $src/000-default.conf   /etc/apache2/sites-enabled/
 10. systemctl restart apache2 
+11. 
+
+
+check
+
+next
+
+  ln -s /data/$proj/server/cgi-bin /var/www/
+    rmdir /usr/lib/cgi-bin 2>/dev/null
+    ln -s /var/www/cgi-bin /usr/lib/
+    ln -s /data/$proj/client/pages /var/www/html/
+    ln -s /data/$proj/client/lib /var/www/html/
+    ln -s /data/$proj/client/app /var/www/html/
+    # ln -s /data/$proj/server/apis/tools /data/$proj/client/app/
+    # ln -s /data/$proj /home/kic/
+
+next
+
+sed -i "s/fly/$proj/g" /data/$proj/server/cgi-bin/api
+sed -i "s/fly/$proj/g" /data/$proj/server/cgi-bin/p4web.py
+sed -i "s/fly/$proj/g" /data/$proj/server/config.py
+
+
+sed -i "s/fly/$proj/g" /data/$proj/install/docker/init.sql
+cd /data/$proj/install/docker/
+mysql < init.sql         
+         
