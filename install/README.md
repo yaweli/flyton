@@ -43,3 +43,15 @@ sed -i "s/fly/$proj/g" /data/$proj/install/docker/init.sql
 cd /data/$proj/install/docker/
 mysql < init.sql         
          
+         
+# only first time
+mv /data/$proj/server/fly_config.py /data/$proj/server/config.py
+sed -i "s/fly/$proj/g" /data/$proj/server/config.py
+
+echo "Edit this: /data/$proj/server/config.py"
+echo "change password: "
+echo "ALTER USER '$proj'@'%' IDENTIFIED BY 'newpas';"
+
+
+# create ceritficat
+# create CloudFront

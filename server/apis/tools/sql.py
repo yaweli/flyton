@@ -17,6 +17,7 @@
 # Version 2.15 - bri - where={}
 # Version 2.16 - support microFlyton sqlite , t.b.c
 # Version 2.17 - bri - support microFlyton mysql + kic_sql_connect()
+# Version 2.18 - sql_var support =NOW() or =NULL to avioide putting " around any string
 #
 import os, sys, json, re
 from datetime import datetime
@@ -277,7 +278,7 @@ def kic_sql(q,elr=0):
 def kic_sql_delete(r):
   q=f'delete from {r["table"]} where id={kic_geresh(r["id"])} limit 1'
   w=kic_sql(q,1)
-  if w["row_count"]>0:
+  if w.get("row_count",0)>0:
     return {"status":1}
   return {"status":0,"err":"not deleted"}
 
@@ -351,6 +352,9 @@ def sql_order(r):
     q += f""" AND {r["where"]}"""
 
   q += f' order by id'
+  if "order" in r:
+    q +=f' {r["order"]}'
+
 
   dict = kic_sql(f"desc `{table}`")
 
@@ -413,7 +417,7 @@ def kic_refine(x,v,cond):
         v = v.lower()
     if "strip" in cond:
       v=v.strip() # removes the leading and trailing spaces and special whitespace characters like tabs ( \t ) and newlines ( \n ) 
-    if "fill_zeros" in cond:
+    if "fill_zeros" in cond and v:
       v=str(v).zfill(cond["fill_zeros"])
     if v!="":
         if "min" in cond:
@@ -541,6 +545,9 @@ def sql_var(k,v,c="="):
       v=v.replace(g,f'\{g}')
   if k in ["order","key","group","order","limit","from","to"]:
     r="`"
+  if type(v) is str and v and v[0]=="=": # exmaple: "NOW()"  WILL BE =NOW()  , the same for "IS NULL" use -> ("IS","=null")
+    g=""
+    v=v[1:]
   return f"""{r}{k}{r}{c}{g}{v}{g}"""
   #          name      =  " val "
   # 
