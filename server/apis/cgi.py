@@ -54,14 +54,13 @@ def do():
     #co=env.get("HTTP_COOKIE")    
     par={}
     if qs != None:
+        # if qs is null - CloudFront
         qsv=qs.split("&")
         for x in qsv:
             v=x.split("=")
             par[v[0]] = v[1]
-    #print(901)
-    post1 = input() # post data string # -d '{"info":{"os":"a","loc":{"latitude":34.34,"longitude":31.31}}}'
-    #print(902)
-    #print(post1)
+    content_length = int(os.environ.get('CONTENT_LENGTH', 0))
+    post1 = sys.stdin.buffer.read(content_length).decode('utf-8') if content_length > 0 else input()
     post  = json.loads(post1)
     # print("post:"+post) # post:{info:{os:a,loc:{latitude:34.34,logitde:31.31}}}
     if not "meth" in par:
@@ -88,36 +87,42 @@ def do():
     sobj={}
     if ses!="":
         sobj = get_data('ses',ses)
+        #  the api side shares this one read too , same as start.py does for a page
+        sobj["my_user_id"] = user_id
+        ses_hold(ses,sobj)
 
 
-    match meth:
-        #
-        # /server/apis/api/api_login.py
-        #                  ^^^^^^^^^^^^
-        #                  ^^^^^^^^^ = meth
-        case s if s.startswith('api_'):
-            print(f'"method":"{meth}"')
-            add="api."
-            mod = f"{add}{meth}"
-            module = importlib.import_module(mod)
-            foo = getattr(module, meth)
-            data={}
-            data["par"]=par
-            data["post"]=post
+    #
+    # /server/apis/api/api_login.py
+    #                  ^^^^^^^^^^^^
+    #                  ^^^^^^^^^ = meth
+    if meth.startswith('api_'):
+        print(f'"method":"{meth}"')
+        add="api."
+        mod = f"{add}{meth}"
+        module = importlib.import_module(mod)
+        foo = getattr(module, meth)
+        data={}
+        data["par"]=par
+        data["post"]=post
+        #  same two the pages get from start.py , so an api_ never has to read
+        #  them again : the gen table and the session of this request
+        data["g"]=gen_data()
+        data["s"]=sobj
 
-            try:
-                foo(data)
-            except Exception as e:
-                print(f"error cgi: ", file=sys.stderr)
-                traceback.print_exc(file=sys.stderr)
-            return
-        
-        case "ping":
-            logger(par,post)
-            return
-        case _:
-            print('"err":"wrong method"')
-            return
+        try:
+            foo(data)
+        except Exception as e:
+            print(f"error cgi: ", file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+        return
+
+    if meth == "ping":
+        logger(par,post)
+        return
+
+    print('"err":"wrong method"')
+    return
 #
 #
 # ***    MAIN      ***
