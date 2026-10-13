@@ -1,23 +1,11 @@
 #
-#
-# kicdev 
+# (c) kicdev - Flyton core - database access
 # 
-# Version 2.03 - support insert_to_sql return "id"
-# Version 2.04 - minor, bool01 type
-# Version 2.05 - search_in_sql addd "where" as object
-# Version 2.06 - zne - gen_data add "data"
-# Version 2.07 - ra - support join
-# Version 2.08 - ra - unicode heb text , org "\uxyz" 
-# Version 2.09 - ra - search in data + more than 1 cond same key
-# Version 2.10 - ra - gtoup by + join  with And
-# Version 2.11 - ra - in (list) as array
-# Version 2.12 - ra - multi join
-# Version 2.13 - ra - sql_what - select from data 
-# Version 2.14 - ra - sql_sort
-# Version 2.15 - bri - where={}
-# Version 2.16 - support microFlyton sqlite , t.b.c
+# Version 2.16 - support microFlyton sqlit
 # Version 2.17 - bri - support microFlyton mysql + kic_sql_connect()
-# Version 2.18 - sql_var support =NOW() or =NULL to avioide putting " around any string
+# Version 2.18 - clean version with no cache
+# Version 2.19 - bri - all diagnostics out (bkq counters , query timing).
+#                the measuring copy is kept beside this file as sql_diag.py
 #
 import os, sys, json, re
 from datetime import datetime
@@ -26,7 +14,7 @@ sys.path.insert(0, '/usr/local/lib/python3.10/dist-packages')
 import importlib.util
 import mysql.connector
 
-sql_v =2.17
+sql_v =2.19
 
 def kic_sql_connect():
   config = kic_config()
@@ -113,6 +101,11 @@ def find_in_sql(r):
 
 def insert_to_sql(r):
 
+    #  get_next_counter reads gen , adds one and writes it back — a stale cache would
+    #  hand the same counter twice in one request , so any write to gen drops it
+    if r.get("table","") == "gen":
+      gen_drop()
+
     tera_id= -1
     try:
       connection = kic_sql_connect()
@@ -178,9 +171,17 @@ def count_in_sql(r):
 #
 # return company general data
 # 1. year 
-# 2. maam
 #
+#
+_gen = {}
+
+def gen_drop():
+  _gen.clear()
+
 def gen_data():
+  if "g" in _gen:
+    return _gen["g"]
+
   z = find_in_sql({'table':'gen','fld':'is_active','val':1,'what':'*','all':1})
   gen={}
   for x in z:
@@ -191,6 +192,7 @@ def gen_data():
     if gd!=None and gd:
       gen[name]["data"] = json.loads(gd)
 
+  _gen["g"] = gen
   return gen
   
 
@@ -221,8 +223,9 @@ def add_to_data(table,id,fld1,val1=""):
 
   sobj = json.dumps(obj,ensure_ascii=False)
 
-  setdata = sql_var("data",sobj)
-  
+  sobj_sql = sobj.replace('\\', '\\\\').replace("'", "\\'")
+  setdata = f"data='{sobj_sql}'"
+
   res = insert_to_sql({'table':table,'set':setdata,'id':id})
   return res
 
@@ -245,8 +248,14 @@ def get_next_counter(field, type1 , data={}):
   
 
 
+#####################
+#
 # any other sql query
 #
+# !!! You need to avoide using this Function !!!
+#
+# Use the find_in_sql() and the insert_to_sql() 
+# 
 #####################
 def kic_sql(q,elr=0):
 
@@ -352,9 +361,6 @@ def sql_order(r):
     q += f""" AND {r["where"]}"""
 
   q += f' order by id'
-  if "order" in r:
-    q +=f' {r["order"]}'
-
 
   dict = kic_sql(f"desc `{table}`")
 
@@ -417,7 +423,7 @@ def kic_refine(x,v,cond):
         v = v.lower()
     if "strip" in cond:
       v=v.strip() # removes the leading and trailing spaces and special whitespace characters like tabs ( \t ) and newlines ( \n ) 
-    if "fill_zeros" in cond and v:
+    if "fill_zeros" in cond:
       v=str(v).zfill(cond["fill_zeros"])
     if v!="":
         if "min" in cond:
@@ -489,12 +495,20 @@ def validate_datemdy(v):
   v=f"{yir}-{mon}-{day}"
   return v
 
+_cfg = {}
+
 def kic_config():
+  #  find_in_sql / kic_sql_connect call this on every query , and it used to read
+  #  config.py off the disk and exec it each time. once per process is enough.
+  if "c" in _cfg:
+    return _cfg["c"]
+
   file_path = "../config.py"
   # Load the module
   spec = importlib.util.spec_from_file_location("config", file_path)
   config = importlib.util.module_from_spec(spec)
   spec.loader.exec_module(config)
+  _cfg["c"] = config
   return config
     
 
@@ -542,10 +556,12 @@ def sql_var(k,v,c="="):
       v=json.dumps(v,ensure_ascii=False)
       g="'"
     if t is str and g in v:
-      v=v.replace(g,f'\{g}')
+      #v=v.replace(g,f'\{g}')
+      v = v.replace(g, "\\" + g)
   if k in ["order","key","group","order","limit","from","to"]:
     r="`"
-  if type(v) is str and v and v[0]=="=": # exmaple: "NOW()"  WILL BE =NOW()  , the same for "IS NULL" use -> ("IS","=null")
+  # exmaple: "NOW()"  WILL BE =NOW()  , the same for "IS NULL" use -> ("IS","=null")
+  if type(v) is str and v and v[0]=="=" and v[1]!="(" and "=" not in v[1:] and "SELECT" not in v.upper():
     g=""
     v=v[1:]
   return f"""{r}{k}{r}{c}{g}{v}{g}"""
