@@ -7,7 +7,7 @@ the Rules:
 - apache2 will have a cgi script that will run the python code on server side and generate the HTML output (like php)
 - The Flyton core of code will be openSource , it's include a long list (follow up)
 - Use AWS cloud9 as the IDE on the dev server , prod server will be accessed only from the "dev" 
-- Flyton core of utility are:
+# Flyton core of utility are
 -- the cgi script
 -- mysql access platform with few functions , write and read from the database
 -- some utility in python to generate nice buttons and HTML elements
