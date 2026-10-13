@@ -1,4 +1,4 @@
-we called the infrastructure "Flyton" , 
+# The infrastructure "Flyton"
 Flyton is a methodology of writing code for web projects , 
 the Rules:
 - using apahce2 on linux ubuntu on EC2 on AWS
