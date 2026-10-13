@@ -3,7 +3,7 @@
 
 # Flyton
 
-**Flyton** is a non-framework, Python based web development environment that generates HTML pages on the fly
+**Flyton** is a non-framework, Python-based web development environment that generates HTML pages on the fly.
 
 [https://www.flyton.ai](https://www.flyton.ai)
 
@@ -14,15 +14,15 @@
 - **Zero Package Dependencies**: Native Python — no external libraries required.
 - **Terminal + Browser Demo Ready**: See code come to life.
 - **Component-Like Programming**: Code is modular and self-explanatory.
-- **CGI Based**: Uses CGI scripts to connect browser ↔ apache ↔ Linux server.
+- **CGI Based**: Uses CGI scripts to connect browser ↔ Apache ↔ Linux server.
 - **Apache2 + Ubuntu**: Reliable, well-supported stack.
 - **HTTPS**: Deploy via AWS with CloudFront or Load Balancer.
 - **MySQL Recommended**: One unified access point with SQL best practices.
 - **Managed Sessions**: Browser & server session support included.
-- **UI tools**: Buttons and form parameters passing utility
-- **Api**: Ready api mechanism for a dynamic web pages - with full support
-- **base tables**: sql best practice records structure with ready made tables: users / sessions / logs 
-- **database**: one point of tools to read and write to the database , secure and comfortable
+- **UI Tools**: Buttons and form-parameter passing utilities.
+- **API**: A ready-made API mechanism for dynamic web pages, with full support.
+- **Base Tables**: SQL best-practice record structure with ready-made tables: users / sessions / logs.
+- **Database**: A single access point to read and write to the database — secure and convenient.
 - **Directory Structure**:
   - `server/`
   - `client/`
@@ -42,7 +42,18 @@ Flyton prioritizes:
 - Clean, reusable code.
 - Developer-friendly standards.
 - Future-proof stability — 100% backward compatibility.
-- fast learning of the tools
+- Fast learning of the tools.
+
+## 🧠 Made for AI Code Agents
+
+Flyton is a natural fit for AI coding agents (Claude Code, Codex, Cursor and others):
+
+- **One clear way to do each thing.** There is one way to read the database, one way to call the server and one way to jump to the next page, so the agent doesn't have to guess.
+- **No hidden magic.** There are no build steps, frameworks or package trees. Each page is a single Python function that returns HTML, so the agent can read the whole flow, from the URL to the page.
+- **Readable by design.** Short names, no `else`, f-string HTML and inline events give small, predictable code that is easy for a human to review.
+- **Rules ready to load.** Give your agent [flyton-prompt-rules.md](flyton-prompt-rules.md) at the start of a session (for example, reference it from your `CLAUDE.md` or `AGENTS.md`) and it will write code the Flyton way from the first line.
+
+> We recommend Flyton as the working method for AI-assisted web development: the agent writes the code fast, and you can still read every line of it.
 
 ## 🚀 Code Example
 
@@ -62,7 +73,7 @@ print(f"""
 
 
 
-## Example 2:
+## Example 2
 
 
 ```python
