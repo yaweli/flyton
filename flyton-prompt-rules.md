@@ -41,7 +41,7 @@ Flyton is a methodology for writing code for web projects.
   - Field "name" — text
   - Field "is_active" = 1 if active (default), 0 if not. We do not delete records; we mark them "is_active"=0. is_active is an integer.
   - Field "created_at" — date of creation (automatic)
-  - Field "updated_at" — date of modification (automatic)
+  - Field "update_at" — date of modification (automatic)
   - Field "data" — JSON format; holds the dynamic fields of a record
   - Other fields as needed — but only if all records need them
 
