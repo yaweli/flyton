@@ -89,7 +89,7 @@ def do():
         sobj = get_data('ses',ses)
         #  the api side shares this one read too , same as start.py does for a page
         sobj["my_user_id"] = user_id
-        ses_hold(ses,sobj)
+        #ses_hold(ses,sobj)
 
 
     #

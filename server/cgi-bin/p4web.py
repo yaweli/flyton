@@ -78,7 +78,7 @@ if "ses" in par:
     ses=par["ses"]
     
 if "app" in par: 
-    spec = importlib.util.spec_from_file_location("*", "/var/www/htmlra/app/"+par["app"]+".py")
+    spec = importlib.util.spec_from_file_location("*", "/var/www/html/app/"+par["app"]+".py")
     foo = importlib.util.module_from_spec(spec)
     sys.modules["module.name"] = foo
     spec.loader.exec_module(foo)
