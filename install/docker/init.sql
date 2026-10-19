@@ -51,7 +51,9 @@ create table ses
     PRIMARY KEY (id)
 );
 
-
+insert into gen set id=42,key1="year",val1=2026;
+ 
+ 
 CREATE USER IF NOT EXISTS 'fly'@'%' IDENTIFIED BY '1964';
 GRANT ALL PRIVILEGES ON *.* TO 'fly'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
