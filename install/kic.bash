@@ -9,8 +9,8 @@
 #######################
 
 
-export ver=1.01
-export db_name=my_name
+export ver=1.02
+export db_name=fly
 export user=$USER
 export host=`hostname`
 
@@ -18,6 +18,7 @@ echo "Welcome to $db_name $ver"
 echo "==================================="
 echo "s - mysql"
 echo "l - tail error log"
+echo "gp - generate password"
 echo "Options: "
 
 if [ "x$1" = "x" ]
@@ -31,5 +32,18 @@ then export MYSQL_PS1="$db_name> "
 fi
 
 if [ "x$x" = "xl" ]
-then tail -f /var/log/apache2/error.log
+then tail -f /var/log/apache2/error.log # make sure to chmod the dir + the file every hour
 fi
+
+
+if [ "x-$x" = "x-gp" ]
+then echo -n "Enter password: " 
+    read y
+    pas=`echo -ne $y | base64`
+    echo "Pass is : $pas"
+fi
+
+
+
+
+
