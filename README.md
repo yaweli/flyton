@@ -27,6 +27,18 @@
   - `server/`
   - `client/`
 
+## 📦 Install
+
+On an empty Ubuntu, as root :
+
+```bash
+mkdir -p /ins && cd /ins && wget -q https://raw.githubusercontent.com/yaweli/flyton/main/install/fly.bash && chmod 755 fly.bash && ln -sf /ins/fly.bash /usr/bin/fly
+fly N   # pick your system name , e.g. Shop -> /data/Shop
+fly I   # install
+```
+
+Full steps: [install/README.md](install/README.md)
+
 ## 🛠 Tools & Methodologies
 
 - Web components: buttons, cards, links, etc.

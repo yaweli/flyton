@@ -1,57 +1,63 @@
-# Install flyton project on a Ubuntu system
+# Install a new Flyton system on an empty Ubuntu
 
+The install is done by one script : `install/fly.bash` .
+Every new system gets its own name - it is the directory `/data/<Name>` .
 
+## The name
 
+- first letter Upper case , then 1 to 9 lower case letters
+- good : `Shop` , `Zg` , `Bridgekey`   bad : `shop` , `Z` , `SHop` , `Shop1`
+- the code goes to `/data/<Name>` , the database and the mysql user are the name in lower case (`shop`)
+- once installed the name is locked - to change it , uninstall (`fly U`) first
 
+## Steps (as root)
 
-1. clone the flyton repository 
-2. systemctl status apache2
-3. systemctl status mysql
-4. apt -y update
-5. export proj=zg
-6.  apt-get install -y apache2 python3 python3-pip mysql-server supervisor mysql-client && \
-    apt install python3-mysql.connector && \
-    a2enmod cgi 
-7. export src=/data/$proj/install/docker/
-8. cp $src/serve-cgi-bin.conf /etc/apache2/conf-enabled/
-9. cp $src/000-default.conf   /etc/apache2/sites-enabled/
-10. systemctl restart apache2 
-11. 
+1. create the user kic
 
+        useradd -s /bin/bash -m kic
+        passwd kic
 
-check
+2. get the script , and link it to `/usr/bin/fly`
 
-next
+        mkdir -p /ins && cd /ins && wget -q https://raw.githubusercontent.com/yaweli/flyton/main/install/fly.bash && chmod 755 fly.bash && ln -sf /ins/fly.bash /usr/bin/fly
 
-  ln -s /data/$proj/server/cgi-bin /var/www/
-    rmdir /usr/lib/cgi-bin 2>/dev/null
-    ln -s /var/www/cgi-bin /usr/lib/
-    ln -s /data/$proj/client/pages /var/www/html/
-    ln -s /data/$proj/client/lib /var/www/html/
-    ln -s /data/$proj/client/app /var/www/html/
-    # ln -s /data/$proj/server/apis/tools /data/$proj/client/app/
-    # ln -s /data/$proj /home/kic/
+3. pick the name , then install
 
-next
+        fly N
+        fly I
 
-sed -i "s/fly/$proj/g" /data/$proj/server/cgi-bin/api
-sed -i "s/fly/$proj/g" /data/$proj/server/cgi-bin/p4web.py
-sed -i "s/fly/$proj/g" /data/$proj/server/config.py
+4. **please change the default db password** (1964) - in mysql and in `/data/<Name>/server/config.py`
 
+        mysql -e "ALTER USER 'shop'@'%' IDENTIFIED BY 'newpas';"
 
-sed -i "s/fly/$proj/g" /data/$proj/install/docker/init.sql
-cd /data/$proj/install/docker/
-mysql < init.sql         
-         
-         
-# only first time
-mv /data/$proj/server/fly_config.py /data/$proj/server/config.py
-sed -i "s/fly/$proj/g" /data/$proj/server/config.py
+5. open `http://thisip/pages/login` - username `kic` , password `fly123`
 
-echo "Edit this: /data/$proj/server/config.py"
-echo "change password: "
-echo "ALTER USER '$proj'@'%' IDENTIFIED BY 'newpas';"
+## What `fly I` does
 
+- apt install : git apache2 python3 python3-pip mysql-server mysql-client python3-mysql.connector , `a2enmod cgi`
+- git clone of flyton into `/data/<Name>` - and the flyton `.git` is removed , it is now **your** project ,
+  create your own git for it
+- puts the name into the code : `server/cgi-bin/api` , `server/cgi-bin/p4web.py` ,
+  `server/config.py` (made from `fly_config.py`) , `install/Grep` , `install/kic.bash`
+- apache : `install/docker/000-default.conf` + `serve-cgi-bin.conf` , links `cgi-bin` , `pages` , `lib` , `app`
+- the database from `install/docker/init.sql`
+- links in `/usr/bin` : `fly` (this script) , `kic` (kic.bash) , `Grep`
 
-# create ceritficat
-# create CloudFront
+## All options
+
+| option | what |
+|---|---|
+| N  | name of the system |
+| I  | install on an empty linux |
+| U  | uninstall - the files and mysql data are renamed with the date , not deleted |
+| A1 | apache is already installed - skip it (a server with more than one project) |
+| R  | reload a new version of this script from the web |
+| F  | first time instructions |
+| l  | apache error log |
+| s  | mysql |
+
+The name is kept in `/ins/.env` .
+
+## Docker
+
+see `install/docker/README.md`
