@@ -1,52 +1,67 @@
-# Install flyton under DOCKER
-on you linux machine , ubuntu , preffered on AWS:
+# Install Flyton under DOCKER
 
+On your linux machine (ubuntu , preffered on AWS) . The image is Ubuntu 24.04 + apache2 + mysql + python3 .
 
+The project name inside docker is always **fly** - `/data/fly` , database `fly` , mysql user `fly` .
+Every container is a machine of its own , so name the **container** for your project instead (`--name shop`) .
 
-install : cd /home/fly/Flyton/install/docker && docker build -t flyton1 .
+## One original copy
 
-run     : docker run -d --name fly  -p 8080:80 flyton1
+This folder does **not** hold a copy of the code . The image is built from the repo's own
+`server/` and `client/` - so the build runs from the **repo root** :
 
-enter into the container:   docker exec -i -t fly /bin/bash
+    cd <repo>
+    docker build -f install/docker/Dockerfile -t flyton .
 
-try to browse : curl http://127.0.0.1:8080
+What is in this folder :
 
+| file | what |
+|---|---|
+| Dockerfile | the build - the same steps as `install/fly.bash` "I" , with the name fly |
+| apache2.conf | apache main conf for the container |
+| 000-default.conf , serve-cgi-bin.conf | apache site + cgi-bin - also used by `install/fly.bash` |
+| init.sql | the first tables + the mysql user - also used by `install/fly.bash` |
+| html/index.html | the welcome page at `/` - also used by `install/fly.bash` |
 
-    <html>
+The `.dockerignore` at the repo root keeps `.git` , the pdf and the big images out of the build .
 
-    Welcome to your new Flyton project
+## Run
 
+    docker run -d --name fly -p 9080:80 -v fly-db:/var/lib/mysql flyton
 
+- browse : `http://myserver_ip:9080/pages/login` - username `kic` , password `fly123`
+- `-v fly-db:/var/lib/mysql` keeps the database in a docker volume , so it survives `docker rm` .
+  use a **named** volume (like `fly-db`) - an empty host directory would start mysql with no `fly` database
+- the container has a healthcheck : `docker ps` shows `(healthy)`
 
+**please change default db password** (1964) :
 
-# Install from docker Hub: 
+    docker exec fly mysql -e "ALTER USER 'fly'@'%' IDENTIFIED BY 'newpas';"
+    docker exec fly sed -i 's/^password = "1964"/password = "newpas"/' /data/fly/server/config.py
 
-docker login 
+## Every day
 
-docker pull yaweli/flyton:v1
+    docker exec -it fly /bin/bash          # enter the container
+    docker exec -it fly kic                # the flyton admin script (s - mysql , l - error log)
+    docker logs fly
+    docker restart fly
+    docker stop fly && docker rm fly       # the database stays in the fly-db volume
 
-# run first time
+Wrap the url with `https://my_domain.com` - map it to port 9080 with CloudFront and Certificate Manager on AWS .
 
-docker run -d --name fly  -p 8080:80 yaweli/flyton:v1
+## Docker Hub
 
+    docker login -u yaweli
+    docker build -f install/docker/Dockerfile -t yaweli/flyton:v2 .
+    docker push yaweli/flyton:v2
 
-try to browse : curl http://127.0.0.1:8080
+and on any machine :
 
-or              http://myserver_ip:8080
+    docker run -d --name fly -p 9080:80 -v fly-db:/var/lib/mysql yaweli/flyton:v2
 
-Dont forget to wrap this url with https://my_domain.com with map to 8080 using CloudFront and CertManager on AWS
+## What it's good for
 
-
-
-docker run -d -p 8080:80 -v /data/webkic/pages:/data/fly/client/pages 75f90f8289c9
-
-
-
-
-# What it's good for:
-
-This is a pulic project , it's a full server side plus client side , python based environment
-
-If you need a fast project to create on your linux server , use the docker hub to get the yaweli/flyton:v1 and in few secode you have a project with database and web interface - add you code to it to be able to continue you project , also good for AI to create the project instead of explaining how to. 
-
-# We are Flyton v 1
+This is a public project , a full server side plus client side , python based environment .
+If you need a fast project on your linux server , in a few seconds you have a project with a
+database and a web interface - add your code to it and go on . Also good for AI to create the
+project instead of explaining how to .

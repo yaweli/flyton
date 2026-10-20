@@ -1,0 +1,11 @@
+# docker build context = the repo root (see install/docker/Dockerfile)
+# only server/ client/ install/ are copied - keep the rest out of the build
+.git
+.claude
+**/__pycache__
+Flyton.pdf
+fly-logo.png
+fly1.png
+flyton-skill.skill.zip
+server/config.py
+**/google_proj_keys.json
