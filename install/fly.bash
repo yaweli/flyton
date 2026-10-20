@@ -10,6 +10,7 @@
 ver=2026.10.20.001 # first version - N I U A1 R F l s
 ver=2026.10.20.002 # UA - uninstall all , for a scratch test machine , with safety checks
 ver=2026.10.20.003 # serve-cgi-bin.conf gets the $proj name
+ver=2026.10.20.004 # pip mysql-connector-python - ubuntu 24 (python 3.12) needs it
 echo "=========================================================="
 echo "== Welcome to Flyton install script manager             =="
 echo "=========================================================="
@@ -459,6 +460,22 @@ then #
     a2enmod cgi && status=1
     if [ "x$status" = "x0" ]
     then echo "Fail - could not install the services"
+         exit
+    fi
+    mes "Next step [$step]" "end"
+
+    #  ubuntu 24 = python 3.12 : the apt python3-mysql.connector (8.0.15) calls ssl.wrap_socket ,
+    #  which 3.12 removed - every query fails . the new one from pip , the same as Bridgekey ins.bash
+    #  ubuntu 22 : its pip does not know --break-system-packages - so try without it
+    step="pip mysql-connector-python"
+    mes "Next step [$step]" "start"
+    export status=0
+    pip install --upgrade mysql-connector-python --break-system-packages && status=1
+    if [ "x$status" = "x0" ]
+    then pip install --upgrade mysql-connector-python && status=1
+    fi
+    if [ "x$status" = "x0" ]
+    then echo "Fail - could not install mysql-connector-python"
          exit
     fi
     mes "Next step [$step]" "end"

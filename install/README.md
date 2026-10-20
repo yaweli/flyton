@@ -35,6 +35,7 @@ Every new system gets its own name - it is the directory `/data/<Name>` .
 ## What `fly I` does
 
 - apt install : git apache2 python3 python3-pip mysql-server mysql-client python3-mysql.connector , `a2enmod cgi`
+- pip install `mysql-connector-python` - the apt one fails on ubuntu 24 (python 3.12)
 - git clone of flyton into `/data/<Name>` - and the flyton `.git` is removed , it is now **your** project ,
   create your own git for it
 - puts the name into the code : `server/cgi-bin/api` , `server/cgi-bin/p4web.py` ,
