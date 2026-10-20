@@ -8,6 +8,7 @@
 # (c) kicdev 10.2026 - learned from the Bridgekey installation kit (ins.bash)
 #
 ver=2026.10.20.001 # first version - N I U A1 R F l s
+ver=2026.10.20.002 # UA - uninstall all , for a scratch test machine , with safety checks
 echo "=========================================================="
 echo "== Welcome to Flyton install script manager             =="
 echo "=========================================================="
@@ -105,6 +106,7 @@ then #
     echo "N     - Name of the system - pick it before install"
     echo "I     - install Flyton [$proj] on an empty linux"
     echo "U     - uninstall All - Totaly erase all data from mysql !"
+    echo "UA    - uninstall ALL , nothing kept - user kic too - scratch test machine only"
     echo "F     - first time - instruction"
     echo "A1    - set apache flag on - already have apache - skip apache install"
     echo "R     - Reload this script new version from the web"
@@ -225,6 +227,144 @@ then #
     echo "1. user kic - will not removed"
     echo "2. /ins files - the name [$proj] is still kept in $envf"
     echo "3. apt modules python3 related will not be removed"
+fi
+
+
+#
+#  UA  -  uninstall ALL , nothing is kept
+#
+#  for a scratch machine that tests this script : after UA the machine is back to empty
+#  ubuntu , and "I" can run again . unlike U , nothing is renamed - it is DELETED :
+#  the database , /data/$proj (and the /data/$proj-date copies U left) , the user kic
+#  with all of /home/kic , the links in /usr/bin , and /ins
+#
+#  it refuses - and deletes nothing - when the machine does not look like a scratch one :
+#     - /home/kic holds anything but the $proj link and the usual hidden files
+#     - /home/kic or /data/$proj is older than 2 months
+#     - user kic is logged in / has running processes
+#  and it asks to type the system name , not just y
+#
+function age_days()
+{
+    t=`stat -c %W $1 2>/dev/null`         # birth time - 0 or - when the disk does not keep it
+    if [ "x$t" = "x0" ] || [ "x$t" = "x-" ] || [ "x$t" = "x" ]
+    then t=`stat -c %Y $1`                 # then the last change
+    fi
+    echo $(( (`date +%s` - t) / 86400 ))
+}
+
+if [ "x$user-$x" = "xroot-UA" ]
+then #
+    if [ "x$proj" = "x" ]
+    then echo "No system name - nothing to uninstall"
+         exit
+    fi
+    echo "Check.. this is a scratch machine"
+    bad=0
+    okh=" .bashrc .profile .bash_logout .bash_history .cache .local .config .ssh .sudo_as_admin_successful .mysql_history .lesshst .viminfo .wget-hsts .python_history "
+    if [ -d /home/kic ]
+    then for f in `ls -A /home/kic`
+         do if [ "x$f" = "x$proj" ]
+            then continue
+            fi
+            if echo "$okh" | grep -q " $f "
+            then continue
+            fi
+            gored ; echo "   /home/kic/$f - not part of [$proj]" ; goback
+            bad=1
+         done
+         d=`age_days /home/kic`
+         if [ $d -gt 60 ]
+         then gored ; echo "   /home/kic is $d days old - more than 2 months" ; goback
+              bad=1
+         fi
+    fi
+    if [ -d /data/$proj ]
+    then d=`age_days /data/$proj`
+         if [ $d -gt 60 ]
+         then gored ; echo "   /data/$proj is $d days old - more than 2 months" ; goback
+              bad=1
+         fi
+    fi
+    if pgrep -u kic >/dev/null 2>&1
+    then gored ; echo "   user kic is logged in / has running processes - log him out first" ; goback
+         bad=1
+    fi
+    if [ "x$bad" = "x1" ]
+    then gored
+         echo "This does not look like a scratch test machine - UA refused , NOTHING deleted"
+         echo "(use U - it keeps the data)"
+         goback
+         exit
+    fi
+    echo "check scratch machine [ok]"
+
+    echo ""
+    gored
+    echo "Danger !!!!!!!!!!!!!!!!  UNINSTALL ALL - NOTHING IS KEPT"
+    echo "Danger !!!!!!!!!!!!!!!!"
+    goback
+    echo "Will be DELETED :"
+    echo "   mysql - packages + all databases   /var/lib/mysql /etc/mysql"
+    if [ -f /etc/apache2/flyton.skip ]
+    then echo "   apache2 - NOT removed (A1 flag is on) - only the $proj links in /var/www"
+    else echo "   apache2 - packages + /var/www /etc/apache2"
+    fi
+    echo "   /data/$proj  `ls -d /data/$proj-* 2>/dev/null | tr '\n' ' '`"
+    echo "   user kic + /home/kic"
+    echo "   /usr/bin/fly /usr/bin/kic /usr/bin/Grep"
+    echo "   /ins  (this script and the name [$proj])"
+    echo ""
+    echo "Type the system name [$proj] to go on : "
+    read z
+    if [ "x$z" != "x$proj" ]
+    then echo "Exit - nothing deleted" ; exit
+    fi
+
+    step="mysql"
+    mes "Next step [$step]" "start"
+    systemctl stop mysql
+    apt-get -y purge 'mysql-.*'
+    rm -fr /var/lib/mysql /etc/mysql /var/log/mysql
+    mes "Next step [$step]" "end"
+
+    step="apache2"
+    mes "Next step [$step]" "start"
+    if [ -f /etc/apache2/flyton.skip ]
+    then rm -f /var/www/cgi-bin /var/www/html/pages /var/www/html/lib /var/www/html/app
+         echo "apache2 kept - A1 flag is on"
+    else systemctl stop apache2
+         apt-get -y purge 'apache2*'
+         rm -fr /var/www /etc/apache2
+         rm -f /usr/lib/cgi-bin
+    fi
+    mes "Next step [$step]" "end"
+
+    step="apt cleanup"
+    mes "Next step [$step]" "start"
+    apt-get autoremove -y
+    apt-get autoclean
+    mes "Next step [$step]" "end"
+
+    step="files"
+    mes "Next step [$step]" "start"
+    rm -fr /data/$proj /data/$proj-*
+    rmdir /data 2>/dev/null
+    rm -f /usr/bin/fly /usr/bin/kic /usr/bin/Grep
+    mes "Next step [$step]" "end"
+
+    step="user kic"
+    mes "Next step [$step]" "start"
+    userdel -r kic
+    mes "Next step [$step]" "end"
+
+    #  last - this script itself lives here
+    rm -fr /ins
+
+    echo ""
+    echo "Uninstall ALL completed - the machine is back to empty"
+    echo "to test again : useradd kic , get fly.bash (see F) , fly N , fly I"
+    exit
 fi
 
 

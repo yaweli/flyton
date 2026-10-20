@@ -50,6 +50,7 @@ Every new system gets its own name - it is the directory `/data/<Name>` .
 | N  | name of the system |
 | I  | install on an empty linux |
 | U  | uninstall - the files and mysql data are renamed with the date , not deleted |
+| UA | uninstall ALL - scratch test machine only - DELETES mysql data , `/data/<Name>` , user kic + `/home/kic` , `/ins` , the `/usr/bin` links . refused if `/home/kic` holds anything else , if `/home/kic` or `/data/<Name>` is older than 2 months , or if kic is logged in . you must type the system name to go on |
 | A1 | apache is already installed - skip it (a server with more than one project) |
 | R  | reload a new version of this script from the web |
 | F  | first time instructions |
