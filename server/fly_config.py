@@ -4,7 +4,7 @@
 sys_mode = "dev" # "dev" or "prod"
 sys_root = "fly"
 sys_url  = "www.fly.yaw.red"
-sys_dly = 1
+sys_fly = 1
 
 # mysql codes
 hostname="localhost"
