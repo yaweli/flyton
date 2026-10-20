@@ -30,7 +30,11 @@ Every new system gets its own name - it is the directory `/data/<Name>` .
 
         mysql -e "ALTER USER 'shop'@'%' IDENTIFIED BY 'newpas';"
 
-5. open `http://thisip/pages/login` - username `kic` , password `fly123`
+5. **please change the web login password** (`kic` / `fly123`) - everybody knows the default
+
+        mysql shop -e "update users set sis=TO_BASE64('newpass') where username='kic';"
+
+6. open `http://thisip/pages/login` - username `kic` , your new password
 
 ## What `fly I` does
 

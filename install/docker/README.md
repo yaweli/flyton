@@ -34,10 +34,23 @@ The `.dockerignore` at the repo root keeps `.git` , the pdf and the big images o
   use a **named** volume (like `fly-db`) - an empty host directory would start mysql with no `fly` database
 - the container has a healthcheck : `docker ps` shows `(healthy)`
 
+## Change the default passwords - FIRST thing
+
+This image is public - everybody knows its default passwords . change both before the server is
+reachable from the internet .
+
+**please change the web login password** (`kic` / `fly123`) :
+
+    docker exec fly mysql fly -e "update users set sis=TO_BASE64('newpass') where username='kic';"
+
+(the login page sends the password in base64 , and `users.sis` keeps the same base64)
+
 **please change default db password** (1964) :
 
     docker exec fly mysql -e "ALTER USER 'fly'@'%' IDENTIFIED BY 'newpas';"
     docker exec fly sed -i 's/^password = "1964"/password = "newpas"/' /data/fly/server/config.py
+
+(mysql port 3306 is not published by `docker run` - the db is reachable only inside the container)
 
 ## Every day
 

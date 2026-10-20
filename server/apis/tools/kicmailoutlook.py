@@ -66,7 +66,7 @@ def send_email_outlook(username, password, recipient_email, subject, body, attac
 
 if __name__ == "__main__":
     # Replace with your Outlook 365 email credentials
-    USERNAME = "itayitayy@students.kinneret.ac.il"  # Sender's email address
+    USERNAME = "your_name@outlook.com"  # Sender's email address
     PASSWORD = "***"  # Sender's password or app-specific password
 
     # Define the recipient's email address

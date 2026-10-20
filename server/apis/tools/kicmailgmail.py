@@ -75,11 +75,11 @@ def send_email_gmail(username, password, recipient_email, subject, body, urls=No
 
 if __name__ == "__main__":
     # Replace with your Gmail email credentials
-    USERNAME = "yovelp789@gmail.com"  # Sender's email address
-    PASSWORD = "edix gsdo ojsz batd"  # App-specific password
+    USERNAME = "your_name@gmail.com"  # Sender's email address
+    PASSWORD = "***"  # App-specific password - never commit a real one
 
     # Define the recipient's email address
-    RECIPIENT_EMAIL = "yovelp789@gmail.com"
+    RECIPIENT_EMAIL = "your_name@gmail.com"
 
     # Define the email subject and body
     SUBJECT = "חידוש הפוליסה בוצע בהצלחה"

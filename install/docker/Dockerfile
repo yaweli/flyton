@@ -95,7 +95,7 @@ command=/init-db.sh\n\
 autorestart=true\n' > /etc/supervisor/conf.d/supervisord.conf
 
 RUN echo "" && \
-    echo " please change default db password (1964) - see install/docker/README.md" && \
+    echo " please change the default passwords - web kic/fly123 + db 1964 - see install/docker/README.md" && \
     echo ""
 
 EXPOSE 80

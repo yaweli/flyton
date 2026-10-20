@@ -11,6 +11,7 @@ ver=2026.10.20.001 # first version - N I U A1 R F l s
 ver=2026.10.20.002 # UA - uninstall all , for a scratch test machine , with safety checks
 ver=2026.10.20.003 # serve-cgi-bin.conf gets the $proj name
 ver=2026.10.20.004 # pip mysql-connector-python - ubuntu 24 (python 3.12) needs it
+ver=2026.10.20.005 # print how to change the web login password (kic / fly123)
 echo "=========================================================="
 echo "== Welcome to Flyton install script manager             =="
 echo "=========================================================="
@@ -579,6 +580,8 @@ then #
     echo " please change default db password (1964) :"
     echo "   mysql -e \"ALTER USER '$db'@'%' IDENTIFIED BY 'newpas';\""
     echo "   and the same password in /data/$proj/server/config.py"
+    echo " please change the web login password (kic / fly123) :"
+    echo "   mysql $db -e \"update users set sis=TO_BASE64('newpass') where username='kic';\""
     goback
     echo ""
     echo " http://thisip/pages/login    username kic , password fly123"
