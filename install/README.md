@@ -38,7 +38,8 @@ Every new system gets its own name - it is the directory `/data/<Name>` .
 - git clone of flyton into `/data/<Name>` - and the flyton `.git` is removed , it is now **your** project ,
   create your own git for it
 - puts the name into the code : `server/cgi-bin/api` , `server/cgi-bin/p4web.py` ,
-  `server/config.py` (made from `fly_config.py`) , `install/Grep` , `install/kic.bash`
+  `server/config.py` (made from `fly_config.py`) , `install/Grep` , `install/kic.bash` ,
+  `install/docker/serve-cgi-bin.conf` (`/data/fly/` -> `/data/<Name>/`)
 - apache : `install/docker/000-default.conf` + `serve-cgi-bin.conf` , links `cgi-bin` , `pages` , `lib` , `app`
 - the database from `install/docker/init.sql`
 - links in `/usr/bin` : `fly` (this script) , `kic` (kic.bash) , `Grep`

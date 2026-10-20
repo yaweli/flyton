@@ -9,6 +9,7 @@
 #
 ver=2026.10.20.001 # first version - N I U A1 R F l s
 ver=2026.10.20.002 # UA - uninstall all , for a scratch test machine , with safety checks
+ver=2026.10.20.003 # serve-cgi-bin.conf gets the $proj name
 echo "=========================================================="
 echo "== Welcome to Flyton install script manager             =="
 echo "=========================================================="
@@ -471,6 +472,7 @@ then #
          sed -i "s/^CompanyTitle=\"Myproj\"/CompanyTitle=\"$proj\"/"     /data/$proj/server/cgi-bin/p4web.py
          sed -i "s/^proj=\"fly\"/proj=\"$proj\"/"                        /data/$proj/install/Grep
          sed -i "s/^export db_name=fly$/export db_name=$db/"             /data/$proj/install/kic.bash
+         sed -i "s#/data/fly/server/cgi-bin/#/data/$proj/server/cgi-bin/#g" /data/$proj/install/docker/serve-cgi-bin.conf
     fi
     # config.py - first time only , from fly_config.py
     if [ ! -f /data/$proj/server/config.py ]
@@ -483,7 +485,7 @@ then #
     if [ ! -f /data/$proj/client/pages/login/index.html ]
     then cp /data/$proj/client/pages/login/fly_index.html /data/$proj/client/pages/login/index.html
     fi
-    grep -n "$proj" /data/$proj/server/cgi-bin/api /data/$proj/server/cgi-bin/p4web.py /data/$proj/server/config.py
+    grep -n "$proj" /data/$proj/server/cgi-bin/api /data/$proj/server/cgi-bin/p4web.py /data/$proj/server/config.py /data/$proj/install/docker/serve-cgi-bin.conf
     mes "Next step [$step]" "end"
 
     step="apache"
