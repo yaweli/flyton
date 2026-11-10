@@ -505,8 +505,9 @@ then #
     then pip install --upgrade mysql-connector-python && status=1
     fi
     if [ "x$status" = "x0" ]
-    then echo "Fail - could not install mysql-connector-python"
-         exit
+    then echo "warning - Fail - could not install mysql-connector-python"
+         echo "will try to continue even on error"
+         #exit
     fi
     mes "Next step [$step]" "end"
 
