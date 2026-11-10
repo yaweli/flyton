@@ -12,11 +12,34 @@ ver=2026.10.20.002 # UA - uninstall all , for a scratch test machine , with safe
 ver=2026.10.20.003 # serve-cgi-bin.conf gets the $proj name
 ver=2026.10.20.004 # pip mysql-connector-python - ubuntu 24 (python 3.12) needs it
 ver=2026.10.20.005 # print how to change the web login password (kic / fly123)
+ver=2026.11.10.001 # any user can install (via sudo) , root refused , kic recommended
+
+#
+#  who runs it
+#
+#  root may not run fly.bash . a normal user runs it , and it restarts itself with sudo -
+#  the work (apt , apache , /data , /usr/bin) needs root . under sudo , $SUDO_USER is the
+#  real user = the owner of /data/$proj . the recommended user is kic - any other only warns
+#
+if [ "x`id -u`" = "x0" ] && ( [ "x$SUDO_USER" = "x" ] || [ "x$SUDO_USER" = "xroot" ] )
+then echo -e "\e[31mroot may not run fly.bash - log in as your user (kic is recommended) and run : fly\e[0m"
+     exit
+fi
+if [ "x`id -u`" != "x0" ]
+then if ! sudo -v
+     then echo -e "\e[31muser $USER needs sudo rights to run fly.bash\e[0m"
+          exit
+     fi
+     exec sudo `readlink -f $0` "$@"
+fi
+
 echo "=========================================================="
 echo "== Welcome to Flyton install script manager             =="
 echo "=========================================================="
 
-user=$USER
+owner=$SUDO_USER                    # the real user - runs fly , owns /data/$proj
+group=`id -gn $owner`
+home=`getent passwd $owner | cut -d: -f6`
 proj=""                             # the system name - picked with "N" , kept in $envf
 docker=0                            # docker=1 , only 0 supported
 act_os=`lsb_release -sr`            # version 24 or 22
@@ -45,6 +68,27 @@ then was=`grep "^proj=" $envf | tail -1 | cut -d= -f2 | tr -d " \t\r"`
      then echo "WARNING: $envf holds proj=[$was] which is not a good name - ignored"
      fi
 fi
+
+#
+#  the remembered owner - the user that ran "I" . U and UA clean up his home , not the
+#  home of whoever runs them now . read the same way as the name , never sourced
+#
+function user_ok()
+{
+    echo "$1" | grep -qE "^[a-z_][a-z0-9_-]{0,31}$"
+}
+
+iown=""                             # the owner of the installed system - written by "I"
+if [ -f $envf ]
+then was=`grep "^owner=" $envf | tail -1 | cut -d= -f2 | tr -d " \t\r"`
+     if user_ok "$was"
+     then iown=$was
+     fi
+fi
+if [ "x$iown" = "x" ]
+then iown=$owner                    # installed before "owner=" was kept - assume the one running now
+fi
+ihome=`getent passwd $iown | cut -d: -f6`
 db=`echo $proj | tr "[:upper:]" "[:lower:]"`   # database + mysql user - the name in lower case
 
 #
@@ -93,7 +137,7 @@ if [ "x$proj" = "x" ]
 then pname="(none yet - use N)"
 else pname="$proj - /data/$proj - database $db"
 fi
-echo "Ver: $ver   User: $user"
+echo "Ver: $ver   User: $owner"
 echo "Os.: $act_os   Architecture: $act_ar"
 gored
 echo "System: $pname"
@@ -104,17 +148,19 @@ then gored
     echo "Skip apache install mode = ON"
     goback
 fi
-if [ "x$user" == "xroot" ]
-then #
-    echo "N     - Name of the system - pick it before install"
-    echo "I     - install Flyton [$proj] on an empty linux"
-    echo "U     - uninstall All - Totaly erase all data from mysql !"
-    echo "UA    - uninstall ALL , nothing kept - user kic too - scratch test machine only"
-    echo "F     - first time - instruction"
-    echo "A1    - set apache flag on - already have apache - skip apache install"
-    echo "R     - Reload this script new version from the web"
-    echo "---"
+if [ "x$owner" != "xkic" ]
+then gored
+    echo "WARNING: the recommended install user is kic - you are $owner (going on)"
+    goback
 fi
+echo "N     - Name of the system - pick it before install"
+echo "I     - install Flyton [$proj] on an empty linux"
+echo "U     - uninstall All - Totaly erase all data from mysql !"
+echo "UA    - uninstall ALL , nothing kept - scratch test machine only"
+echo "F     - first time - instruction"
+echo "A1    - set apache flag on - already have apache - skip apache install"
+echo "R     - Reload this script new version from the web"
+echo "---"
 echo "l - view error logs  s - mysql"
 echo "=="
 
@@ -131,7 +177,7 @@ fi
 #  once the system is installed the name is locked - /data/$proj , the database and the
 #  code all carry it , so a new name would point to nothing .
 #
-if [ "x$x-$user" = "xN-root" ]
+if [ "x$x" = "xN" ]
 then if [ "x$proj" != "x" ] && [ -d /data/$proj ]
      then gored
           echo "[$proj] is installed in /data/$proj - the name is locked (uninstall first - U)"
@@ -154,7 +200,7 @@ then mysql $db
 fi
 
 
-if [ "x$user-$x" = "xroot-A1" ]
+if [ "x$x" = "xA1" ]
 then echo "light flag ignor - and dont install apache"
      echo "use for a test servers with more than one project on it"
      mkdir -p /etc/apache2 2>/dev/null
@@ -162,19 +208,21 @@ then echo "light flag ignor - and dont install apache"
 fi
 
 
-if [ "x$x-$user" = "xF-root" ]
+if [ "x$x" = "xF" ]
 then
     echo ""
     echo ""
-    echo "useradd -s /bin/bash -m kic"
-    echo "passwd kic"
+    echo "as root - a user with sudo rights , kic is recommended :"
+    echo "   useradd -s /bin/bash -m -G sudo kic"
+    echo "   passwd kic"
+    echo "then log in as that user - root may not run fly"
     echo "then : fly N   - pick the system name"
     echo "then : fly I   - install"
     echo ""
 fi
 
 
-if [ "x$user-$x" = "xroot-U" ]
+if [ "x$x" = "xU" ]
 then #
     if [ "x$proj" = "x" ]
     then echo "No system name - nothing to uninstall"
@@ -213,7 +261,9 @@ then #
     fi
 
     echo "remove files .. [start] "
-    rm -f /home/kic/$proj 2>/dev/null
+    if [ "x$ihome" != "x" ]
+    then rm -f $ihome/$proj 2>/dev/null
+    fi
     if [ -d /data/$proj ]
     then export ddd=`date +%F-%H:%M`
         echo "Rename /data files /data/$proj /data/$proj-$ddd"
@@ -227,7 +277,7 @@ then #
     echo "Uninstall completed........"
     echo ""
     echo "Some parts will not be removed"
-    echo "1. user kic - will not removed"
+    echo "1. user $iown - will not removed"
     echo "2. /ins files - the name [$proj] is still kept in $envf"
     echo "3. apt modules python3 related will not be removed"
 fi
@@ -238,14 +288,14 @@ fi
 #
 #  for a scratch machine that tests this script : after UA the machine is back to empty
 #  ubuntu , and "I" can run again . unlike U , nothing is renamed - it is DELETED :
-#  the database , /data/$proj (and the /data/$proj-date copies U left) , the user kic
-#  with all of /home/kic , the links in /usr/bin , and /ins
+#  the database , /data/$proj (and the /data/$proj-date copies U left) , the $proj link
+#  in the owner's home , the links in /usr/bin , and /ins
 #
-#  it refuses - and deletes nothing - when the machine does not look like a scratch one :
-#     - /home/kic holds anything but the $proj link and the usual hidden files
-#     - /home/kic or /data/$proj is older than 2 months
-#     - user kic is logged in / has running processes
-#  and it asks to type the system name , not just y
+#  the user is NOT deleted - he is the one running fly . the userdel command is printed ,
+#  to run by hand as another sudo user if the machine must be clean of him too
+#
+#  it refuses - and deletes nothing - when /data/$proj is older than 2 months
+#  (not a scratch machine) , and it asks to type the system name , not just y
 #
 function age_days()
 {
@@ -256,7 +306,7 @@ function age_days()
     echo $(( (`date +%s` - t) / 86400 ))
 }
 
-if [ "x$user-$x" = "xroot-UA" ]
+if [ "x$x" = "xUA" ]
 then #
     if [ "x$proj" = "x" ]
     then echo "No system name - nothing to uninstall"
@@ -264,34 +314,12 @@ then #
     fi
     echo "Check.. this is a scratch machine"
     bad=0
-    okh=" .bashrc .profile .bash_logout .bash_history .cache .local .config .ssh .sudo_as_admin_successful .mysql_history .lesshst .viminfo .wget-hsts .python_history "
-    if [ -d /home/kic ]
-    then for f in `ls -A /home/kic`
-         do if [ "x$f" = "x$proj" ]
-            then continue
-            fi
-            if echo "$okh" | grep -q " $f "
-            then continue
-            fi
-            gored ; echo "   /home/kic/$f - not part of [$proj]" ; goback
-            bad=1
-         done
-         d=`age_days /home/kic`
-         if [ $d -gt 60 ]
-         then gored ; echo "   /home/kic is $d days old - more than 2 months" ; goback
-              bad=1
-         fi
-    fi
     if [ -d /data/$proj ]
     then d=`age_days /data/$proj`
          if [ $d -gt 60 ]
          then gored ; echo "   /data/$proj is $d days old - more than 2 months" ; goback
               bad=1
          fi
-    fi
-    if pgrep -u kic >/dev/null 2>&1
-    then gored ; echo "   user kic is logged in / has running processes - log him out first" ; goback
-         bad=1
     fi
     if [ "x$bad" = "x1" ]
     then gored
@@ -314,7 +342,7 @@ then #
     else echo "   apache2 - packages + /var/www /etc/apache2"
     fi
     echo "   /data/$proj  `ls -d /data/$proj-* 2>/dev/null | tr '\n' ' '`"
-    echo "   user kic + /home/kic"
+    echo "   $ihome/$proj  (the link - user $iown and his home are kept)"
     echo "   /usr/bin/fly /usr/bin/kic /usr/bin/Grep"
     echo "   /ins  (this script and the name [$proj])"
     echo ""
@@ -354,24 +382,24 @@ then #
     rm -fr /data/$proj /data/$proj-*
     rmdir /data 2>/dev/null
     rm -f /usr/bin/fly /usr/bin/kic /usr/bin/Grep
-    mes "Next step [$step]" "end"
-
-    step="user kic"
-    mes "Next step [$step]" "start"
-    userdel -r kic
+    if [ "x$ihome" != "x" ]
+    then rm -f $ihome/$proj
+    fi
     mes "Next step [$step]" "end"
 
     #  last - this script itself lives here
     rm -fr /ins
 
     echo ""
-    echo "Uninstall ALL completed - the machine is back to empty"
-    echo "to test again : useradd kic , get fly.bash (see F) , fly N , fly I"
+    echo "Uninstall ALL completed - the machine is back to empty , but user $iown is kept"
+    echo "to delete him too - log out , and as another sudo user run :"
+    echo "   sudo userdel -r $iown"
+    echo "to test again : get fly.bash (see F) , fly N , fly I"
     exit
 fi
 
 
-if [ "x$user-$x" = "xroot-I" ]
+if [ "x$x" = "xI" ]
 then #
     if [ "x$proj" = "x" ]
     then echo "No system name yet"
@@ -400,14 +428,12 @@ then #
     then echo "Dir exist , must uninstall /data/$proj"
          exit
     fi
-    if [ ! -d /home/kic ]
-    then echo "user kic must be created !"
-         echo "useradd -s /bin/bash -m kic"
-         echo "passwd kic"
+    if [ "x$home" = "x" ] || [ ! -d $home ]
+    then echo "user $owner has no home directory - create it first"
          exit
     fi
-    if [ -e /home/kic/$proj ]
-    then echo "Dir exist , must uninstall /home/kic/$proj"
+    if [ -e $home/$proj ]
+    then echo "Dir exist , must uninstall $home/$proj"
          exit
     fi
     echo "check files [ok]"
@@ -415,6 +441,7 @@ then #
     echo "* INSTALLATION OF [$proj] ON AN EMPTY SYSTEM "
     echo "* code     : /data/$proj"
     echo "* database : $db"
+    echo "* owner    : $owner  ($home/$proj)"
     echo "*"
     echo "Ready to install ? (y/n) <n> "
     read y
@@ -422,6 +449,8 @@ then #
     then echo "Exit" ; exit
     fi
     echo "Ready "
+    #  the owner is kept with the name - U and UA find his home by it
+    echo "owner=$owner" >> $envf
 
     step="apt update"
     mes "Next step [$step]" "start"
@@ -538,8 +567,9 @@ then #
     ln -s /data/$proj/client/app /var/www/html/
     ln -s /data/$proj/server/apis/tools /data/$proj/client/app/
     cp /data/$proj/install/docker/html/index.html /var/www/html/index.html
-    ln -s /data/$proj /home/kic/
-    chown -R kic:kic /data/$proj
+    ln -s /data/$proj $home/
+    chown -h $owner:$group $home/$proj
+    chown -R $owner:$group /data/$proj
     mes "Next step [$step]" "end"
 
     #  database + mysql user = $db - only the exact lines of init.sql are changed
@@ -588,7 +618,7 @@ then #
 fi
 
 
-if [ "x$user-$x" = "xroot-R" ]
+if [ "x$x" = "xR" ]
 then #
     mkdir -p /ins && cd /ins && rm -f fly.bash 2>/dev/null && wget -q $raw -O fly.bash && chmod 755 fly.bash && ln -sf /ins/fly.bash /usr/bin/fly && exec ./fly.bash
 fi
@@ -599,14 +629,14 @@ exit
 #
 # Flyton installation on an empty ubuntu
 #
-# (1) first time:
-#     useradd -s /bin/bash -m kic
+# (1) first time , as root - a user with sudo rights ( kic is recommended , any other only warns ):
+#     useradd -s /bin/bash -m -G sudo kic
 #     passwd kic
 #
-# (2) then run (as root):
-#     mkdir -p /ins && cd /ins && wget -q https://raw.githubusercontent.com/yaweli/flyton/main/install/fly.bash && chmod 755 fly.bash && ln -sf /ins/fly.bash /usr/bin/fly
+# (2) log in as that user - root may not run fly.bash - then :
+#     sudo mkdir -p /ins && cd /ins && sudo wget -q https://raw.githubusercontent.com/yaweli/flyton/main/install/fly.bash && sudo chmod 755 fly.bash && sudo ln -sf /ins/fly.bash /usr/bin/fly
 #
-# (3) then :
+# (3) then ( fly restarts itself with sudo ) :
 #     fly N   - pick the system name  ( Shop -> /data/Shop , database shop )
 #     fly I   - full install
 #

@@ -2,6 +2,7 @@
 #
 # search content inside kicdev code
 # ver : 2.02 - support no remarks mode
+# ver : 2.03 - any user , not only kic
 #
 if [ "x$USER" = "xroot" ]
 then echo "===(dont use root)==="
@@ -10,15 +11,16 @@ fi
 
 proj="fly"
 
-if [ "x$USER" = "xkic" ]
-then echo ""
-    echo "============= Search [ $1 ] ==============="
-    cd /home/kic/$proj
-    files=`find . -type f | egrep -v "(__pycache__|\.git|webfonts/|font-awesome|\.min\.|.claude/|/old/)"`
-    grep --color -n "$1" $files 
-    
-    cd /home/kic/kic/admin
+#  any user - the install links /data/$proj into the home of the user that ran "fly I"
+echo ""
+echo "============= Search [ $1 ] ==============="
+cd $HOME/$proj
+files=`find . -type f | egrep -v "(__pycache__|\.git|webfonts/|font-awesome|\.min\.|.claude/|/old/)"`
+grep --color -n "$1" $files
+
+if [ -d $HOME/kic/admin ]
+then cd $HOME/kic/admin
     filek=`find . -type f | egrep -v "(__pycache__|\.git|webfonts/|font-awesome|\.min\.|.claude/|/old/)"`
     grep --color -n "$1" $filek
-    echo "==================================================="
 fi
+echo "==================================================="

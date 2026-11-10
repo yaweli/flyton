@@ -10,16 +10,23 @@ Every new system gets its own name - it is the directory `/data/<Name>` .
 - the code goes to `/data/<Name>` , the database and the mysql user are the name in lower case (`shop`)
 - once installed the name is locked - to change it , uninstall (`fly U`) first
 
-## Steps (as root)
+## The user
 
-1. create the user kic
+- **root may not run `fly`** - it refuses
+- run it as a normal user with sudo rights - `fly` restarts itself with `sudo`
+- that user owns `/data/<Name>` , and gets the link `~/<Name>`
+- the recommended user is `kic` - any other user gets a warning , and the install goes on
 
-        useradd -s /bin/bash -m kic
+## Steps
+
+1. as root , create the user (kic is recommended) with sudo rights
+
+        useradd -s /bin/bash -m -G sudo kic
         passwd kic
 
-2. get the script , and link it to `/usr/bin/fly`
+2. log in as that user , get the script , and link it to `/usr/bin/fly`
 
-        mkdir -p /ins && cd /ins && wget -q https://raw.githubusercontent.com/yaweli/flyton/main/install/fly.bash && chmod 755 fly.bash && ln -sf /ins/fly.bash /usr/bin/fly
+        sudo mkdir -p /ins && cd /ins && sudo wget -q https://raw.githubusercontent.com/yaweli/flyton/main/install/fly.bash && sudo chmod 755 fly.bash && sudo ln -sf /ins/fly.bash /usr/bin/fly
 
 3. pick the name , then install
 
@@ -56,14 +63,14 @@ Every new system gets its own name - it is the directory `/data/<Name>` .
 | N  | name of the system |
 | I  | install on an empty linux |
 | U  | uninstall - the files and mysql data are renamed with the date , not deleted |
-| UA | uninstall ALL - scratch test machine only - DELETES mysql data , `/data/<Name>` , user kic + `/home/kic` , `/ins` , the `/usr/bin` links . refused if `/home/kic` holds anything else , if `/home/kic` or `/data/<Name>` is older than 2 months , or if kic is logged in . you must type the system name to go on |
+| UA | uninstall ALL - scratch test machine only - DELETES mysql data , `/data/<Name>` , the `~/<Name>` link , `/ins` , the `/usr/bin` links . the user is **not** deleted - the `userdel` command is printed . refused if `/data/<Name>` is older than 2 months . you must type the system name to go on |
 | A1 | apache is already installed - skip it (a server with more than one project) |
 | R  | reload a new version of this script from the web |
 | F  | first time instructions |
 | l  | apache error log |
 | s  | mysql |
 
-The name is kept in `/ins/.env` .
+The name - and the user that installed it - are kept in `/ins/.env` .
 
 ## Docker
 
